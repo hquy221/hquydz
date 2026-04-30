@@ -2,8 +2,9 @@ import telebot
 import time
 from flask import Flask
 from threading import Thread
+import threading
 
-# --- CẤU HÌNH MASTER ID ---
+# --- CẤU HÌNH MASTER ID CỦA ÔNG ---
 MASTER_ID = 7153197678
 ADMINS = [7153197678]
 delay_spam = 0.3
@@ -22,100 +23,232 @@ TOKENS = [
     '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o', '8745047343:AAF3XKrSHnGHujBv94a2GeYXweXgIFMEFVs'
 ]
 
-# Nội dung Lag cực đại như ảnh mẫu
+# Văn bản /spdai ông vừa gửi
+SPDAI_CONTENT = """cn choa ei=))=))=))=))
+123=))=))=))=))
+m chay anh cmnr=))=))=))=))=))
+m yeu ot z tk nfu=))=))=))=))=))
+m cham vl e=))=))=))
+slow lun e=))=))=))=))
+yeu z cn dix=))=))=))=))
+tk 3de=))=))=))=))=))
+tk dix lgbt=))=))=))=))
+cn choa nfu=))=))=))=))=))
+deo co canh lun e=))=))=))=))
+m cham vl e=))=))=))=))
+m yeu v=))=))=))=))=))=))
+yeu ro=))=))=))=))=))=))
+bia a=))=))=))=))
+tk dix=))=))=))=))
+mau k=))=))=))=))
+mau de=))=))=))=))=))
+cham a=))=))=))=))=))=))
+tk nfu =))=))=))=))=))
+mau ti de=))=))=))=))
+yeu ot vcl=))=))=))=))
+cmm dot tu kia=))=))=))
+lien tuc de=))=))=))=))=))
+alo may cn cho nu=)) =)) =)) 
+cmm =))=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau de=))=))=))=))=))
+alo alo=))=))=))=))
+cn tó ei=))=))=))
+mau ti e=))=))=))=))
+mau de=))=))=))=))
+yeu ot v=))=))=))
+tk ccho ei=))=))=))
+m tru noi k ay=))=))=))=))
+tk 3de=))=))=))=))
+cn ga ei=))=))=))=))
+m ga vl lun e=))=))=))=))
+alo alo=))=))=))
+sao ay nhi=))=))=))=))
+anh lai win a=))=))=))=))
+uoc loser ma=))=))=))=))
+tk nfu ei=))=))=))=))
+slow k ay=))=))=))
+cn cho =))=))=))
+speed lun e=))=))=))
+toi die k e=))=))=))
+mau me m di=))=))=))=))
+tk cho nfu=))=))=))=))=))
+m ot bo ro=))=))=))=))
+m bia a=))=))=))=))=))
+con gi khac k=))=))=))=))
+tk ga ei=))=))=))
+mau k e=))=))=))=))=))
+anh win cmnr=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau me m di=))=))=))=))
+tk cho nfu=))=))=))=))=))
+a đấng hot war mà=))=))=))=))
+cmm chối à=))=))=))=))
+a hw mẹ r=))=))=))=))
+con gi dau ma noi =))=))=))=))
+a treo co me m ma=))=))=))=))
+a win ma=))=))=))=))
+m bia a=))=))=))=))
+tk nfu ri=))=))=))=))=))
+m ngu v =))=))=))=))
+ngu ro lun e=))=))=))=))=))
+bia a e=))=))=))=))
+le de alo =))=))=))=))
+s do =))=))=))=))=))
+m sao =))=))=))=))
+ m chạy a mà=))=))=))=))
+m bịa à=))=))=))=))
+ tk nu=))=))=))=))=))
+cmm =))=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau de=))=))=))=))=))
+alo alo=))=))=))=))
+cn tó ei=))=))=))
+mau ti e=))=))=))=))
+mau de=))=))=))=))
+yeu ot v=))=))=))
+tk ccho ei=))=))=))
+m tru noi k ay=))=))=))=))
+tk 3de=))=))=))=))
+cn ga ei=))=))=))=))
+m ga vl lun e=))=))=))=))
+alo alo=))=))=))
+sao ay nhi=))=))=))=))
+anh lai win a=))=))=))=))
+uoc loser ma=))=))=))=))
+tk nfu ei=))=))=))=))
+slow k ay=))=))=))
+cn cho =))=))=))
+speed lun e=))=))=))
+toi die k e=))=))=))
+tru ma=))=))=))
+tru ne tk nfu=))=))=))=))=))
+m tru k noi a=))=))=))=))=))
+m yeu v a=))=))=))=))
+tk ga ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))=))
+yeu z=))=))=))=))=))
+cn choa nfu=))=))=))=))=))
+sao do=))=))=))=))=))=))
+chay bo a=))=))=))=))=))
+bo manh vl=))=))=))=))
+bo dzi ba ro=))=))=))=))
+m chay a ma=))=))=))
+anh hot war ma e=))=))=))=))=))
+anh hot trụ cmnr=))=))=))=))=))
+m lam lai a k =))=))=))=))
+lam lai anh deo dau ma=))=))=))=))
+chay anh ro r=))=))=))=))
+con gi khac k=))=))=))=))=))
+m bia a=))=))=))=))
+tk nfu ei=))=))=))=))
+cam m bia ma=))=))=))=))
+bia cn gia m dot tu e=))=))=))=))=))
+lofi chill k=))=))=))=))"""
+
+# Nội dung Lag trắng màn hình
 K_LAG = "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰ "
-LAG_TXT = K_LAG * 600
+LAG_TXT = K_LAG * 500
 
 app = Flask(__name__)
 @app.route('/')
-def home(): return "SYSTEM ONLINE"
+def home(): return "SYSTEM READY"
+
+def spam_task(bot, chat_id, content):
+    global dang_spam
+    while dang_spam:
+        try:
+            bot.send_message(chat_id, content)
+            time.sleep(delay_spam)
+        except: break
 
 def setup_bot(token):
     bot = telebot.TeleBot(token)
 
     @bot.message_handler(func=lambda m: True)
-    def handle_all_messages(m):
+    def handle_all(m):
         global dang_spam, delay_spam
-        # Check quyền ID 7153197678
+        # Check quyền Master ID của ông
         if m.from_user.id != 7153197678 and m.from_user.id not in ADMINS:
             return
 
-        cmd = m.text.split()[0].lower() if m.text else ""
+        txt = m.text.lower() if m.text else ""
 
-        # LỆNH HỆ THỐNG
-        if cmd == '/help':
-            help_text = (
-                "✨ **DANH SÁCH LỆNH ĐIỀU KHIỂN**\n"
-                "━━━━━━━━━━━━━━\n"
-                "🔹 `/info`: Thông tin chủ bot\n"
-                "🔹 `/list`: Danh sách Admin\n"
-                "🔹 `/splag`: Spam lag siêu dài\n"
-                "🔹 `/spdai`: Spam chửi mẫu\n"
-                "🔹 `/spam [text]`: Spam nội dung tùy chọn\n"
-                "🔹 `/dung`: Dừng spam\n"
-                "🔹 `/setdelay [s]`: Chỉnh tốc độ\n"
-                "🔹 `/addadm [id]`: Thêm Admin\n"
-                "🔹 `/xoaadm [id]`: Xóa Admin"
-            )
-            bot.send_message(m.chat.id, help_text, parse_mode="Markdown")
+        if txt == '/help':
+            bot.send_message(m.chat.id, "✨ **DANH SÁCH LỆNH**\n- `/info` | `/list` | `/splag` | `/spdai` | `/spam` | `/dung` | `/setdelay` | `/addadm` | `/xoaadm`", parse_mode="Markdown")
 
-        elif cmd == '/list':
-            ad_list = "👥 **ADMINS:**\n" + "\n".join([f"• `{a}`" for a in ADMINS])
-            bot.send_message(m.chat.id, ad_list, parse_mode="Markdown")
+        elif txt == '/info':
+            bot.send_message(m.chat.id, f"👤 **MASTER:** `7153197678`", parse_mode="Markdown")
 
-        elif cmd == '/info':
-            bot.send_message(m.chat.id, "👤 **MASTER:** `7153197678` | **STATUS:** `ONLINE`", parse_mode="Markdown")
+        elif txt == '/list':
+            bot.send_message(m.chat.id, f"👥 **ADMINS:**\n" + "\n".join([f"• `{a}`" for a in ADMINS]), parse_mode="Markdown")
 
-        # QUẢN LÝ ADMIN (Chỉ Master được dùng)
-        elif cmd == '/addadm':
+        elif txt.startswith('/addadm'):
             if m.from_user.id == 7153197678:
                 try:
                     new_id = int(m.text.split()[1])
                     if new_id not in ADMINS: ADMINS.append(new_id)
-                    bot.reply_to(m, f"✅ Đã thêm Admin: `{new_id}`")
-                except: pass
-        
-        elif cmd == '/xoaadm':
-            if m.from_user.id == 7153197678:
-                try:
-                    old_id = int(m.text.split()[1])
-                    if old_id != 7153197678 and old_id in ADMINS:
-                        ADMINS.remove(old_id)
-                        bot.reply_to(m, f"🗑️ Đã xóa Admin: `{old_id}`")
+                    bot.reply_to(m, f"✅ Thêm Admin: `{new_id}`")
                 except: pass
 
-        # LỆNH SPAM
-        elif cmd == '/splag':
-            dang_spam = True
-            while dang_spam:
-                try:
-                    bot.send_message(m.chat.id, LAG_TXT)
-                    time.sleep(delay_spam)
-                except: break
+        elif txt == '/splag':
+            if not dang_spam:
+                dang_spam = True
+                threading.Thread(target=spam_task, args=(bot, m.chat.id, LAG_TXT)).start()
 
-        elif cmd == '/spdai':
-            dang_spam = True
-            content = "alo alo cn choa ei mau ti k mau de mau de mau de tk nfu ei m cham vl m bia ro m yeu ot vcl " * 80
-            while dang_spam:
-                try:
-                    bot.send_message(m.chat.id, content)
-                    time.sleep(delay_spam)
-                except: break
+        elif txt == '/spdai':
+            if not dang_spam:
+                dang_spam = True
+                threading.Thread(target=spam_task, args=(bot, m.chat.id, SPDAI_CONTENT)).start()
 
-        elif cmd == '/spam':
-            content = m.text.replace('/spam', '').strip() or "..."
-            dang_spam = True
-            while dang_spam:
-                try:
-                    bot.send_message(m.chat.id, content)
-                    time.sleep(delay_spam)
-                except: break
+        elif txt.startswith('/spam'):
+            if not dang_spam:
+                content = m.text.replace('/spam', '').strip() or "..."
+                dang_spam = True
+                threading.Thread(target=spam_task, args=(bot, m.chat.id, content)).start()
 
-        elif cmd == '/dung':
+        elif txt == '/dung':
             dang_spam = False
-            bot.send_message(m.chat.id, "🛑 **ĐÃ DỪNG TOÀN BỘ**")
+            bot.send_message(m.chat.id, "🛑 **ĐÃ DỪNG**")
 
-        elif cmd == '/setdelay':
+        elif txt.startswith('/setdelay'):
             try:
                 delay_spam = float(m.text.split()[1])
                 bot.reply_to(m, f"⏱️ Delay: `{delay_spam}s`")
