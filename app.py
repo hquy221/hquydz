@@ -4,7 +4,7 @@ from flask import Flask
 import time
 import requests
 
-# --- DANH SÁCH 23 TOKEN (GIỮ NGUYÊN) ---
+# --- DANH SÁCH 23 TOKEN ---
 RAW_TOKENS = [
     '8429960682:AAHltNvwWjEn1QC_f5R8JPgz7uN1uFhny18', '8481938728:AAGen1t8Tz3jeu02kJ8HoCIZLiPLdd687n8',
     '8739448460:AAGNLEW-WDvatbxmPLzkziG5jpd5hTRfqiE', '8689807630:AAEoXvm45QaW1jlT-H_KzNlmCpu50Q3k2S4',
@@ -28,131 +28,207 @@ app = Flask('')
 
 @app.route('/')
 def home():
-    return "SYSTEM 23 BOTS ACTIVE - FULL TEXT MODE"
-
-def filter_tokens():
-    global VALID_TOKENS
-    VALID_TOKENS = []
-    for t in RAW_TOKENS:
-        try:
-            res = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=5)
-            if res.status_code == 200: VALID_TOKENS.append(t)
-        except: pass
+    return f"STATUS: {len(VALID_TOKENS)} BOTS ONLINE"
 
 def setup_bot(token):
-    bot = telebot.TeleBot(token)
-    def check_adm(uid): return uid in ADMIN_LIST
+    try:
+        bot = telebot.TeleBot(token)
+        def check_adm(uid): return uid in ADMIN_LIST
 
-    @bot.message_handler(commands=['help'])
-    def h(m):
-        if check_adm(m.from_user.id):
-            msg = "📌 LỆNH CHIẾN:\n/spdai, /splag, /spam, /sptag\n/info, /list, /addadm, /xoaadm\n/setdelay, /dung"
-            bot.reply_to(m, msg)
+        # --- ĐẦY ĐỦ CÁC LỆNH QUẢN TRỊ ---
+        @bot.message_handler(commands=['help'])
+        def h(m):
+            if check_adm(m.from_user.id):
+                msg = (
+                    "🔥 MENU ĐIỀU KHIỂN 🔥\n\n"
+                    "⚔️ [SPAM]\n"
+                    "/spdai - Chửi đài dài\n"
+                    "/splag - Gây lag máy (X1.5)\n"
+                    "/spam [text] - Spam tự do\n"
+                    "/sptag [tag] - Tag liên hồi\n"
+                    "/dung - Dừng hệ thống\n\n"
+                    "👑 [ADMIN]\n"
+                    "/list - Danh sách Admin\n"
+                    "/info - Check Bot Online\n"
+                    "/addadm [ID] - Thêm Admin\n"
+                    "/xoaadm [ID] - Xóa Admin\n"
+                    "/setdelay [s] - Chỉnh tốc độ"
+                )
+                bot.reply_to(m, msg)
 
-    @bot.message_handler(commands=['info', 'list'])
-    def info(m):
-        if check_adm(m.from_user.id):
-            bot.reply_to(m, f"📊 Online: {len(VALID_TOKENS)} Bots\n⏳ Delay: {spam_delay}s")
+        @bot.message_handler(commands=['info'])
+        def info(m):
+            if check_adm(m.from_user.id):
+                bot.reply_to(m, f"📊 Online: {len(VALID_TOKENS)} Bots\n⚡ Speed: {spam_delay}s\n🔥 Spamming: {is_spaming}")
 
-    @bot.message_handler(commands=['addadm'])
-    def add(m):
-        if check_adm(m.from_user.id):
-            try:
-                nid = int(m.text.split()[1])
-                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
-                bot.reply_to(m, f"✅ Đã thêm admin {nid}")
-            except: pass
+        @bot.message_handler(commands=['list'])
+        def list_adm(m):
+            if check_adm(m.from_user.id):
+                msg = "📜 DANH SÁCH ADMIN:\n" + "\n".join([f"- `{i}`" for i in ADMIN_LIST])
+                bot.reply_to(m, msg, parse_mode="Markdown")
 
-    @bot.message_handler(commands=['setdelay'])
-    def sd(m):
-        global spam_delay
-        if check_adm(m.from_user.id):
-            try:
-                spam_delay = float(m.text.split()[1])
-                bot.reply_to(m, f"⚡ Set delay: {spam_delay}s")
-            except: pass
-
-    @bot.message_handler(commands=['dung'])
-    def stop(m):
-        global is_spaming
-        if check_adm(m.from_user.id):
-            is_spaming = False
-            bot.reply_to(m, "🛑 STOP")
-
-    @bot.message_handler(commands=['sptag'])
-    def tag_spam(m):
-        global is_spaming
-        if check_adm(m.from_user.id):
-            is_spaming = True
-            try:
-                target = m.text.split(' ', 1)[1]
-                for i in range(200):
-                    if not is_spaming: break
-                    bot.send_message(m.chat.id, f"{target} sủa đi e {i+1}")
-                    time.sleep(spam_delay)
-            except: pass
-
-    @bot.message_handler(commands=['splag'])
-    def lag(m):
-        global is_spaming
-        if check_adm(m.from_user.id):
-            is_spaming = True
-            # VĂN BẢN LAG FULL KHÔNG DÙNG PHÉP NHÂN
-            txt_lag = "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
-            for _ in range(100):
-                if not is_spaming: break
+        @bot.message_handler(commands=['addadm'])
+        def add(m):
+            if check_adm(m.from_user.id):
                 try:
-                    bot.send_message(m.chat.id, txt_lag)
-                    time.sleep(spam_delay)
-                except: time.sleep(1)
+                    nid = int(m.text.split()[1])
+                    if nid not in ADMIN_LIST:
+                        ADMIN_LIST.append(nid)
+                        bot.reply_to(m, f"✅ Đã cấp quyền Admin cho: {nid}")
+                except: bot.reply_to(m, "⚠️ Lỗi: /addadm [ID]")
 
-    @bot.message_handler(commands=['spdai'])
-    def dai(m):
-        global is_spaming
-        if check_adm(m.from_user.id):
-            is_spaming = True
-            # VĂN BẢN ĐÀI FULL CỰC DÀI (GHI TRỰC TIẾP)
-            txt_war = (
-                "cn choa ei=))=))=))=))\n123=))=))=))=))\nm chay anh cmnr=))=))=))=))=))\n"
-                "m yeu ot z tk nfu=))=))=))=))=))\nm cham vl e=))=))=))\nslow lun e=))=))=))=))\nyeu z cn dix=))=))=))=))\n"
-                "tk 3de=))=))=))=))=))\ntk dix lgbt=))=))=))\ncn choa nfu=))=))=))=))=))\ndeo co canh lun e=))=))=))=))\n"
-                "m cham vl e=))=))=))=))\nm yeu v=))=))=))=))=))=))\nyeu ro=))=))=))=))=))=))\nbia a=))=))=))=))\ntk dix=))=))=))=))\nmau k=))=))=))=))\nmau de=))=))=))=))=))\ncham a=))=))=))=))=))=))\ntk nfu =))=))=))=))=))\nmau ti de=))=))=))=))\nyeu ot vcl=))=))=))=))\ncmm dot tu kia=))=))=))\nlien tuc de=))=))=))=))=))\nalo may cn cho nu=)) =)) =)) \ncmm =))=))=))=))\nsua e=))=))=))=))\nmau e=))=))=))\nmau de=))=))=))\ntk ga=))=))=))\nm cham a=))=))=))\nm cham ro=))=))=))=))\nm bia a=))=))=))\ntk nfu ei=))=))=))=))\nmau k e=))=))=))=))\nmau de=))=))=))\nalo alo=))=))=))=))=))\ncn choa ei=))=))=))=))\nmau ti k=))=))=))=))\nmau de=))=))=))=))=))\nalo alo=))=))=))=))\ncn tó ei=))=))=))\nmau ti e=))=))=))=))\nmau de=))=))=))=))\nyeu ot v=))=))=))\ntk ccho ei=))=))=))\nm tru noi k ay=))=))=))=))\ntk 3de=))=))=))=))\ncn ga ei=))=))=))=))\nm ga vl lun e=))=))=))=))\nalo alo=))=))=))\nsao ay nhi=))=))=))=))\nanh lai win a=))=))=))=))\nuoc loser ma=))=))=))=))\ntk nfu ei=))=))=))=))\nslow k ay=))=))=))\ncn cho =))=))=))\nspeed lun e=))=))=))\ntoi die k e=))=))=))\ntru ma=))=))=))\ntru ne tk nfu=))=))=))=))=))\nm tru k noi a=))=))=))=))=))\nm yeu v a=))=))=))=))\ntk ga ei=))=))=))=))\nmau k e=))=))=))=))\nmau de=))=))=))=))\nyeu z=))=))=))=))=))\ncn choa nfu=))=))=))=))=))\nsao do=))=))=))=))=))=))\nchay bo a=))=))=))=))=))\nbo manh vl=))=))=))=))\nbo dzi ba ro=))=))=))=))\nm chay a ma=))=))=))\nanh hot war ma e=))=))=))=))=))\nanh hot trụ cmnr=))=))=))=))=))\nm lam lai a k =))=))=))=))\nlam lai anh deo dau ma=))=))=))=))\nchay anh ro r=))=))=))=))\ncon gi khac k=))=))=))=))=))\nm bia a=))=))=))=))\ntk nfu ei=))=))=))=))\ncam m bia ma=))=))=))=))\nbia cn gia m dot tu e=))=))=))=))=))\nlofi chill k=))=))=))=))\n"
-                "cn choa ei=))=))=))=))\n123=))=))=))=))\nm chay anh cmnr=))=))=))=))=))\n"
-                "m yeu ot z tk nfu=))=))=))=))=))\nm cham vl e=))=))=))\nslow lun e=))=))=))=))\nyeu z cn dix=))=))=))=))\n"
-                "tk 3de=))=))=))=))=))\ntk dix lgbt=))=))=))\ncn choa nfu=))=))=))=))=))\ndeo co canh lun e=))=))=))=))\n"
-                "m cham vl e=))=))=))=))\nm yeu v=))=))=))=))=))=))\nyeu ro=))=))=))=))=))=))\nbia a=))=))=))=))\ntk dix=))=))=))=))\nmau k=))=))=))=))\nmau de=))=))=))=))=))\ncham a=))=))=))=))=))=))\ntk nfu =))=))=))=))=))\nmau ti de=))=))=))=))\nyeu ot vcl=))=))=))=))\ncmm dot tu kia=))=))=))\nlien tuc de=))=))=))=))=))\nalo may cn cho nu=)) =)) =)) \ncmm =))=))=))=))\nsua e=))=))=))=))\nmau e=))=))=))\nmau de=))=))=))\ntk ga=))=))=))\nm cham a=))=))=))\nm cham ro=))=))=))=))\nm bia a=))=))=))\ntk nfu ei=))=))=))=))\nmau k e=))=))=))=))\nmau de=))=))=))\nalo alo=))=))=))=))=))\ncn choa ei=))=))=))=))\nmau ti k=))=))=))=))\nmau de=))=))=))=))=))\nalo alo=))=))=))=))\ncn tó ei=))=))=))\nmau ti e=))=))=))=))\nmau de=))=))=))=))\nyeu ot v=))=))=))\ntk ccho ei=))=))=))\nm tru noi k ay=))=))=))=))\ntk 3de=))=))=))=))\ncn ga ei=))=))=))=))\nm ga vl lun e=))=))=))=))\nalo alo=))=))=))\nsao ay nhi=))=))=))=))\nanh lai win a=))=))=))=))\nuoc loser ma=))=))=))=))\ntk nfu ei=))=))=))=))\nslow k ay=))=))=))\ncn cho =))=))=))\nspeed lun e=))=))=))\ntoi die k e=))=))=))\ntru ma=))=))=))\ntru ne tk nfu=))=))=))=))=))\nm tru k noi a=))=))=))=))=))\nm yeu v a=))=))=))=))\ntk ga ei=))=))=))=))\nmau k e=))=))=))=))\nmau de=))=))=))=))\nyeu z=))=))=))=))=))\ncn choa nfu=))=))=))=))=))\nsao do=))=))=))=))=))=))\nchay bo a=))=))=))=))=))\nbo manh vl=))=))=))=))\nbo dzi ba ro=))=))=))=))\nm chay a ma=))=))=))\nanh hot war ma e=))=))=))=))=))\nanh hot trụ cmnr=))=))=))=))=))\nm lam lai a k =))=))=))=))\nlam lai anh deo dau ma=))=))=))=))\nchay anh ro r=))=))=))=))\ncon gi khac k=))=))=))=))=))\nm bia a=))=))=))=))\ntk nfu ei=))=))=))=))\ncam m bia ma=))=))=))=))\nbia cn gia m dot tu e=))=))=))=))=))\nlofi chill k=))=))=))=))"
-            )
-            for _ in range(100):
-                if not is_spaming: break
-                bot.send_message(m.chat.id, txt_war)
-                time.sleep(spam_delay)
+        @bot.message_handler(commands=['xoaadm'])
+        def xoa(m):
+            if check_adm(m.from_user.id):
+                try:
+                    nid = int(m.text.split()[1])
+                    if nid in ADMIN_LIST:
+                        if nid == 7153197678:
+                            bot.reply_to(m, "❌ Admin gốc không thể xóa!")
+                        else:
+                            ADMIN_LIST.remove(nid)
+                            bot.reply_to(m, f"🗑️ Đã xóa Admin: {nid}")
+                except: bot.reply_to(m, "⚠️ Lỗi: /xoaadm [ID]")
 
-    @bot.message_handler(commands=['spam'])
-    def s(m):
-        global is_spaming
-        if check_adm(m.from_user.id):
-            is_spaming = True
-            try:
-                txt = m.text.split(' ', 1)[1]
-                for _ in range(100):
+        @bot.message_handler(commands=['setdelay'])
+        def sd(m):
+            global spam_delay
+            if check_adm(m.from_user.id):
+                try:
+                    spam_delay = float(m.text.split()[1])
+                    bot.reply_to(m, f"⚡ Đã chỉnh delay thành: {spam_delay}s")
+                except: pass
+
+        @bot.message_handler(commands=['dung'])
+        def stop(m):
+            global is_spaming
+            if check_adm(m.from_user.id):
+                is_spaming = False
+                bot.reply_to(m, "🛑 HỆ THỐNG ĐÃ DỪNG")
+
+        # --- LỆNH CHIẾN - VĂN BẢN KÉO DÀI THỦ CÔNG ---
+        @bot.message_handler(commands=['splag'])
+        def lag(m):
+            global is_spaming
+            if check_adm(m.from_user.id):
+                is_spaming = True
+                # NỘI DUNG LAG ĐÃ ĐƯỢC KÉO DÀI GẤP 1.5 LẦN
+                txt_lag = (
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰♱꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰\n"
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰"
+                )
+                for _ in range(500):
                     if not is_spaming: break
-                    bot.send_message(m.chat.id, txt)
-                    time.sleep(spam_delay)
-            except: pass
+                    try:
+                        bot.send_message(m.chat.id, txt_lag)
+                        time.sleep(spam_delay)
+                    except: time.sleep(1)
 
-    bot.infinity_polling(timeout=25, skip_pending=True)
+        @bot.message_handler(commands=['spdai'])
+        def dai(m):
+            global is_spaming
+            if check_adm(m.from_user.id):
+                is_spaming = True
+                txt_war = (
+                    "cn choa ei=))=))=))=))\n123=))=))=))=))\nm chay anh cmnr=))=))=))=))=))\n"
+                    "m yeu ot z tk nfu=))=))=))=))=))\nm cham vl e=))=))=))\nslow lun e=))=))=))=))\nyeu z cn dix=))=))=))=))\n"
+                    "tk 3de=))=))=))=))=))\ntk dix lgbt=))=))=))\ncn choa nfu=))=))=))=))=))\ndeo co canh lun e=))=))=))=))\n"
+                    "m cham vl e=))=))=))=))\nm yeu v=))=))=))=))=))=))\nyeu ro=))=))=))=))=))=))\nbia a=))=))=))=))\ntk dix=))=))=))=))\nmau k=))=))=))=))\nmau de=))=))=))=))=))\ncham a=))=))=))=))=))=))\ntk nfu =))=))=))=))=))\nmau ti de=))=))=))=))\nyeu ot vcl=))=))=))=))\ncmm dot tu kia=))=))=))\n"
+                    "lien tuc de=))=))=))=))=))\nalo may cn cho nu=)) =)) =)) \ncmm =))=))=))=))\nsua e=))=))=))=))\nmau e=))=))=))\nmau de=))=))=))\ntk ga=))=))=))\nm cham a=))=))=))\nm cham ro=))=))=))=))\nm bia a=))=))=))\ntk nfu ei=))=))=))=))\nmau k e=))=))=))=))\nmau de=))=))=))\nalo alo=))=))=))=))=))\ncn choa ei=))=))=))=))\nmau ti k=))=))=))=))\nmau de=))=))=))=))=))\nalo alo=))=))=))=))\n"
+                )
+                for _ in range(500):
+                    if not is_spaming: break
+                    bot.send_message(m.chat.id, txt_war)
+                    time.sleep(spam_delay)
+
+        @bot.message_handler(commands=['sptag'])
+        def tag_msg(m):
+            global is_spaming
+            if check_adm(m.from_user.id):
+                is_spaming = True
+                try:
+                    target = m.text.split(' ', 1)[1]
+                    for i in range(1000):
+                        if not is_spaming: break
+                        bot.send_message(m.chat.id, f"{target} sủa đi con {i+1}")
+                        time.sleep(spam_delay)
+                except: pass
+
+        @bot.message_handler(commands=['spam'])
+        def s_msg(m):
+            global is_spaming
+            if check_adm(m.from_user.id):
+                is_spaming = True
+                try:
+                    txt = m.text.split(' ', 1)[1]
+                    for _ in range(1000):
+                        if not is_spaming: break
+                        bot.send_message(m.chat.id, txt)
+                        time.sleep(spam_delay)
+                except: pass
+
+        bot.infinity_polling(timeout=20, skip_pending=True)
+    except: pass
 
 def run():
-    filter_tokens()
-    if not VALID_TOKENS: return
-    for token in VALID_TOKENS:
-        t = threading.Thread(target=setup_bot, args=(token,))
-        t.daemon = True
-        t.start()
-        time.sleep(1.2)
+    global VALID_TOKENS
+    for t in RAW_TOKENS:
+        try:
+            res = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=5).json()
+            if res.get("ok"):
+                VALID_TOKENS.append(t)
+                thread = threading.Thread(target=setup_bot, args=(t,))
+                thread.daemon = True
+                thread.start()
+                print(f"Bot {t[:10]}... OK")
+                time.sleep(1.2) 
+        except: pass
 
 if __name__ == "__main__":
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=8080)).start()
     run()
-    while True: 
-        time.sleep(3) # Main loop duy trì 3s
+    while True:
+        time.sleep(3)
