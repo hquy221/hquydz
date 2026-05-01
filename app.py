@@ -24,19 +24,19 @@ RAW_TOKENS = [
 ]
 
 VALID_BOTS = []
-ADMIN_LIST = [7153197678] 
+ADMIN_LIST = [7153197678] # ID Admin mặc định
 DELAY_TIME = 0.05
 stop_event = threading.Event()
 app = Flask(__name__)
 
-# --- ANTI-BAN SHIELD ---
-def anti_ban_content(text):
-    """Lách luật Telegram bằng ký tự tàng hình"""
+# --- CÔNG CỤ TỰ ĐỘNG ---
+def anti_ban_noise(text):
+    """Chèn ký tự tàng hình để vượt mặt hệ thống quét của Telegram"""
     noise = "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=5))
     return f"{text} {noise}"
 
-# --- TỰ ĐỘNG LỌC TOKEN CHẾT ---
-def filter_system():
+def filter_dead_bots():
+    """Tự động kiểm tra token sai/chết khi khởi động"""
     global VALID_BOTS
     VALID_BOTS.clear()
     for t in RAW_TOKENS:
@@ -49,35 +49,36 @@ def filter_system():
                 VALID_BOTS.append(bot)
         except: continue
 
-# --- ENGINE SPAM ĐIỀU PHỐI ---
-def run_spam(chat_id, mode, content="", target_id=None):
+# --- ENGINE ĐIỀU PHỐI QUÂN ĐOÀN ---
+def spam_worker(chat_id, mode, content="", target_id=None):
     if not VALID_BOTS: return
-    cycle = itertools.cycle(VALID_BOTS)
+    bot_cycle = itertools.cycle(VALID_BOTS)
+    
     while not stop_event.is_set():
-        bot = next(cycle)
+        current_bot = next(bot_cycle)
         try:
-            msg = anti_ban_content(content)
+            msg = anti_ban_noise(content)
             p_mode = None
             if mode == 'sptag':
-                msg = anti_ban_content(f"[{content}](tg://user?id={target_id})")
+                msg = anti_ban_noise(f"[{content}](tg://user?id={target_id})")
                 p_mode = "Markdown"
             elif mode == 'spnd':
-                msg = anti_ban_content("\n".join([f"[{i}] {content}" for i in range(50)]))
+                msg = anti_ban_noise("\n".join([f"[{i}] {content}" for i in range(50)]))
             
-            bot.send_message(chat_id, msg, parse_mode=p_mode)
+            current_bot.send_message(chat_id, msg, parse_mode=p_mode)
             time.sleep(DELAY_TIME)
         except Exception as e:
-            if "retry after" in str(e).lower(): time.sleep(10)
+            if "retry after" in str(e).lower(): time.sleep(5)
             continue
 
-# --- MASTER CONTROL (ADMIN) ---
-def start_master():
+# --- MASTER CONTROL (ADMIN COMMANDS) ---
+def start_master_bot():
     if not VALID_BOTS: return
-    # Con bot đầu tiên trong danh sách sống sẽ làm Chỉ huy
+    # Con bot đầu tiên trong danh sách hợp lệ sẽ làm "Chỉ huy trưởng"
     master = VALID_BOTS[0]
 
     @master.message_handler(func=lambda m: True)
-    def handle_commands(m):
+    def handle_all_commands(m):
         global DELAY_TIME
         if m.from_user.id not in ADMIN_LIST: return
         
@@ -85,62 +86,81 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
-        # --- LỆNH TẤN CÔNG ---
-        if cmd in ['/spnd', '/spam']:
+        # --- LỆNH QUẢN TRỊ ---
+        if cmd == '/listbot':
+            list_msg = "\n".join([f"🤖 @{b.username} (`{b.id}`)" for b in VALID_BOTS])
+            master.reply_to(m, f"✅ **Danh sách bot đang sống ({len(VALID_BOTS)}):**\n{list_msg}", parse_mode="Markdown")
+
+        elif cmd == '/setdelay':
+            try:
+                val = float(args[1])
+                if 0.001 <= val <= 2.5:
+                    DELAY_TIME = val
+                    master.reply_to(m, f"⚡ Đã chỉnh delay spam thành: `{DELAY_TIME}s`", parse_mode="Markdown")
+                else:
+                    master.reply_to(m, "❌ Delay chỉ được trong khoảng `0.001` đến `2.5` giây.")
+            except: master.reply_to(m, "❌ Sai cú pháp. Ví dụ: `/setdelay 0.1`")
+
+        elif cmd == '/addadm':
+            try:
+                new_id = int(args[1])
+                if new_id not in ADMIN_LIST:
+                    ADMIN_LIST.append(new_id)
+                    master.reply_to(m, f"✅ Đã cấp quyền Admin cho: `{new_id}`", parse_mode="Markdown")
+            except: master.reply_to(m, "❌ Sai cú pháp. Ví dụ: `/addadm 123456789`")
+
+        elif cmd == '/xoaadm':
+            try:
+                rem_id = int(args[1])
+                if rem_id in ADMIN_LIST and rem_id != 7153197678: # Không cho xóa admin gốc
+                    ADMIN_LIST.remove(rem_id)
+                    master.reply_to(m, f"❌ Đã gỡ quyền Admin của: `{rem_id}`", parse_mode="Markdown")
+            except: master.reply_to(m, "❌ Sai cú pháp. Ví dụ: `/xoaadm 123456789`")
+
+        # --- LỆNH TẤN CÔNG & THÔNG TIN ---
+        elif cmd == '/spnd':
             stop_event.clear()
-            threading.Thread(target=run_spam, args=(m.chat.id, cmd[1:], m.text[6:]), daemon=True).start()
-            master.reply_to(m, "🚀 KHỞI ĐỘNG QUÂN ĐOÀN!")
+            threading.Thread(target=spam_worker, args=(m.chat.id, 'spnd', m.text[6:]), daemon=True).start()
 
         elif cmd == '/sptag':
             if len(args) < 3: return
             stop_event.clear()
-            threading.Thread(target=run_spam, args=(m.chat.id, 'sptag', " ".join(args[2:]), args[1]), daemon=True).start()
+            threading.Thread(target=spam_worker, args=(m.chat.id, 'sptag', " ".join(args[2:]), args[1]), daemon=True).start()
 
-        elif cmd == '/dung': # ĐÃ THAY ĐỔI TẠI ĐÂY
+        elif cmd == '/spam':
+            stop_event.clear()
+            threading.Thread(target=spam_worker, args=(m.chat.id, 'spam', m.text[6:]), daemon=True).start()
+
+        elif cmd == '/dung':
             stop_event.set()
-            master.reply_to(m, "🛑 ĐÃ DỪNG SPAM.")
-
-        # --- LỆNH THÔNG TIN ---
-        elif cmd == '/help':
-            master.reply_to(m, "🔥 `/spnd /sptag /spam /dung` \n📊 `/infobot /info /listbot /listadm` \n⚙️ `/setdelay /addadm /xoaadm`")
-
-        elif cmd == '/infobot':
-            master.reply_to(m, f"🤖 ID Bot Chỉ Huy: `{master.id}`", parse_mode="Markdown")
+            master.reply_to(m, "🛑 ĐÃ DỪNG TOÀN QUÂN.")
 
         elif cmd == '/info':
-            tid = m.reply_to_message.from_user.id if m.reply_to_message else (args[1] if len(args)>1 else m.from_user.id)
-            master.reply_to(m, f"🆔 User ID tra cứu: `{tid}`", parse_mode="Markdown")
+            target_id = m.reply_to_message.from_user.id if m.reply_to_message else (args[1] if len(args)>1 else m.from_user.id)
+            master.reply_to(m, f"🆔 ID Người này: `{target_id}`", parse_mode="Markdown")
 
-        elif cmd == '/listbot':
-            list_b = "\n".join([f"✅ @{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 **Bots sống ({len(VALID_BOTS)}):**\n{list_b}", parse_mode="Markdown")
-
-        elif cmd == '/listadm':
-            master.reply_to(m, f"👥 **Admins:** `{ADMIN_LIST}`", parse_mode="Markdown")
-
-        elif cmd == '/setdelay': 
-            try: DELAY_TIME = float(args[1])
-            except: pass
-
-        elif cmd == '/addadm':
-            try:
-                nid = int(args[1])
-                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
-            except: pass
-
-        elif cmd == '/xoaadm':
-            try: ADMIN_LIST.remove(int(args[1]))
-            except: pass
+        elif cmd == '/help':
+            msg = (
+                "🚀 **LỆNH TẤN CÔNG:**\n"
+                "`/spnd [nội dung]` / `/sptag [ID] [nội dung]` / `/spam [nội dung]` / `/dung`\n\n"
+                "⚙️ **LỆNH QUẢN TRỊ:**\n"
+                "`/listbot` - Xem bầy bot sống\n"
+                "`/setdelay [0.001-2.5]` - Chỉnh tốc độ\n"
+                "`/addadm [ID]` - Thêm Admin quản lý\n"
+                "`/xoaadm [ID]` - Xoá Admin\n"
+                "`/info` - Xem ID người dùng"
+            )
+            master.reply_to(m, msg, parse_mode="Markdown")
 
     master.infinity_polling(timeout=20, skip_pending=True)
 
 @app.route('/')
-def home(): return "SYSTEM ONLINE"
+def home(): return "BOT CLUSTER ONLINE"
 
 if __name__ == "__main__":
-    filter_system() # Tự động lọc bot chết/sai khi khởi động
+    filter_dead_bots() # Lọc bot trước khi chạy
     port = int(os.environ.get("PORT", 8080))
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=port), daemon=True).start()
     while True:
-        try: start_master()
-        except: time.sleep(5) # Tự hồi sinh sau 5s nếu sập
+        try: start_master_bot()
+        except: time.sleep(5)
