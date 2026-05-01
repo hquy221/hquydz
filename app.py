@@ -7,7 +7,7 @@ import itertools
 import os
 import random
 
-# --- CẤU HÌNH ---
+# --- DANH SÁCH TOKEN ---
 RAW_TOKENS = [
     '8429960682:AAHltNvwWjEn1QC_f5R8JPgz7uN1uFhny18', '8481938728:AAGen1t8Tz3jeu02kJ8HoCIZLiPLdd687n8',
     '8739448460:AAGNLEW-WDvatbxmPLzkziG5jpd5hTRfqiE', '8689807630:AAEoXvm45QaW1jlT-H_KzNlmCpu50Q3k2S4',
@@ -29,12 +29,13 @@ DELAY_TIME = 0.05
 stop_event = threading.Event()
 app = Flask(__name__)
 
-# --- ANTI-BAN & UTILS ---
-def anti_ban(text):
+# --- CƠ CHẾ LỌC VÀ CHỐNG KHOÁ ---
+def anti_ban_shield(text):
+    """Chèn nhiễu để tránh AI quét nội dung trùng lặp"""
     noise = "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=5))
     return f"{text} {noise}"
 
-def filter_tokens():
+def scan_and_filter():
     global VALID_BOTS
     VALID_BOTS.clear()
     for t in RAW_TOKENS:
@@ -47,86 +48,90 @@ def filter_tokens():
                 VALID_BOTS.append(bot)
         except: continue
 
-# --- ENGINE ---
-def spam_worker(chat_id, mode, content="", target_id=None):
-    bot_cycle = itertools.cycle(VALID_BOTS)
+# --- ENGINE ĐIỀU PHỐI ---
+def spam_engine(chat_id, mode, content="", target_id=None):
+    if not VALID_BOTS: return
+    cycle = itertools.cycle(VALID_BOTS)
     while not stop_event.is_set():
-        current_bot = next(bot_cycle)
+        bot = next(cycle)
         try:
-            msg = anti_ban(content)
-            p_mode = None
+            msg = anti_ban_shield(content)
+            parse = None
             if mode == 'sptag':
-                msg = f"[{content}](tg://user?id={target_id})"
-                p_mode = "Markdown"
+                msg = anti_ban_shield(f"[{content}](tg://user?id={target_id})")
+                parse = "Markdown"
             elif mode == 'spnd':
-                msg = "\n".join([f"[{i}] {content}" for i in range(100)]) # Rút gọn để tránh lag bot
+                msg = anti_ban_shield("\n".join([f"[{i}] {content}" for i in range(50)]))
             
-            current_bot.send_message(chat_id, msg, parse_mode=p_mode)
+            bot.send_message(chat_id, msg, parse_mode=parse)
             time.sleep(DELAY_TIME)
-        except: continue
+        except Exception as e:
+            if "retry after" in str(e).lower(): time.sleep(10)
+            continue
 
-# --- MASTER COMMANDS ---
-def start_master():
+# --- MASTER LOGIC ---
+def run_master():
     if not VALID_BOTS: return
     master = VALID_BOTS[0]
 
     @master.message_handler(func=lambda m: True)
-    def handle(m):
+    def master_handler(m):
         global DELAY_TIME
         if m.from_user.id not in ADMIN_LIST: return
         args = m.text.split()
         cmd = args[0].lower()
 
         if cmd == '/help':
-            master.reply_to(m, "🚀 /spnd /sptag /spam /stop\n📊 /infobot /info /listbot /listadm\n⚙️ /setdelay /addadm /xoaadm")
+            master.reply_to(m, "🔥 `/spnd /sptag /spam /stop` \n📊 `/infobot /info /listbot /listadm` \n⚙️ `/setdelay /addadm /xoaadm`")
 
-        elif cmd == '/spnd':
+        elif cmd in ['/spnd', '/spam']:
             stop_event.clear()
-            threading.Thread(target=spam_worker, args=(m.chat.id, 'spnd', m.text[6:]), daemon=True).start()
+            threading.Thread(target=spam_engine, args=(m.chat.id, cmd[1:], m.text[6:]), daemon=True).start()
 
         elif cmd == '/sptag':
             stop_event.clear()
-            threading.Thread(target=spam_worker, args=(m.chat.id, 'sptag', " ".join(args[2:]), args[1]), daemon=True).start()
-
-        elif cmd == '/spam':
-            stop_event.clear()
-            threading.Thread(target=spam_worker, args=(m.chat.id, 'spam', m.text[6:]), daemon=True).start()
+            threading.Thread(target=spam_engine, args=(m.chat.id, 'sptag', " ".join(args[2:]), args[1]), daemon=True).start()
 
         elif cmd == '/stop': stop_event.set()
 
-        elif cmd == '/infobot': master.reply_to(m, f"🤖 Bot ID: `{master.id}`", parse_mode="Markdown")
+        elif cmd == '/infobot':
+            master.reply_to(m, f"🤖 ID Bot Chỉ Huy: `{master.id}`", parse_mode="Markdown")
 
         elif cmd == '/info':
             tid = m.reply_to_message.from_user.id if m.reply_to_message else (args[1] if len(args)>1 else m.from_user.id)
             master.reply_to(m, f"🆔 User ID: `{tid}`", parse_mode="Markdown")
 
         elif cmd == '/listbot':
-            list_b = "\n".join([f"@{b.username} ({b.id})" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 **Bots:**\n{list_b}", parse_mode="Markdown")
+            list_b = "\n".join([f"✅ @{b.username}" for b in VALID_BOTS])
+            master.reply_to(m, f"🤖 **Quân đoàn ({len(VALID_BOTS)}):**\n{list_b}", parse_mode="Markdown")
 
-        elif cmd == '/listadm': master.reply_to(m, f"👥 **Admins:** `{ADMIN_LIST}`", parse_mode="Markdown")
+        elif cmd == '/listadm':
+            master.reply_to(m, f"👥 **Admins:** `{ADMIN_LIST}`", parse_mode="Markdown")
 
         elif cmd == '/setdelay': 
             try: DELAY_TIME = float(args[1])
             except: pass
 
         elif cmd == '/addadm':
-            try: ADMIN_LIST.append(int(args[1]))
+            try: 
+                new_id = int(args[1])
+                if new_id not in ADMIN_LIST: ADMIN_LIST.append(new_id)
             except: pass
 
         elif cmd == '/xoaadm':
             try: ADMIN_LIST.remove(int(args[1]))
             except: pass
 
-    master.infinity_polling(timeout=15)
+    master.infinity_polling(timeout=20, skip_pending=True)
 
 @app.route('/')
-def home(): return "ONLINE 24/7"
+def home(): return "SYSTEM ACTIVE"
 
 if __name__ == "__main__":
-    filter_tokens()
+    scan_and_filter()
     port = int(os.environ.get("PORT", 8080))
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=port), daemon=True).start()
     while True:
-        try: start_master()
+        try: run_master()
         except: time.sleep(5)
+
