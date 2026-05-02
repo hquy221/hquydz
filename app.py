@@ -27,7 +27,7 @@ RAW_TOKENS = [
     '8724848112:AAHhLYnH1LO4tVUPMTjztbNZZtni7D0uDl4', '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o'
 ]
 
-# --- KHO CHỬI X3 (MẠNH + DÀI) ---
+# --- KHO VĂN BẢN (X3) ---
 CHUI_LIST = [
     "cn choa ei=))=))=))=))", "m chay anh cmnr=))=))=))=))=))", "m yeu ot z tk nfu=))=))=))=))=))", 
     "m cham vl e=))=))=))", "slow lun e=))=))=))=))", "yeu z cn dix=))=))=))=))", 
@@ -60,7 +60,7 @@ CHUI_LIST = [
 ]
 
 VALID_BOTS = []
-ADMIN_LIST = [7153197678] #
+ADMIN_LIST = [7153197678] 
 DELAY_TIME = 0.1
 stop_event = threading.Event()
 app = Flask(__name__)
@@ -73,9 +73,9 @@ def filter_system():
     VALID_BOTS.clear()
     for t in RAW_TOKENS:
         try:
-            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=2).json()
+            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=1).json()
             if r.get("ok"):
-                bot = telebot.TeleBot(t)
+                bot = telebot.TeleBot(t, threaded=True, num_threads=15)
                 bot.username = r['result']['username']
                 VALID_BOTS.append(bot)
         except: continue
@@ -89,12 +89,17 @@ def bot_worker(bot, chat_id, mode, content="", target_id=None):
             elif mode == 'sptag':
                 text = f"[Sủa đi con chó ngu này](tg://user?id={target_id}) {get_noise()}"
                 p_mode = "Markdown"
+            elif mode == 'splag':
+                text = f"LẮC ĐI CON CHÓ {get_noise()} " * 20
+            elif mode == 'spdai':
+                text = f"SỦA ĐI CON THÚ {get_noise()}\n" * 15
             else:
                 text = f"{content} {get_noise()}"
+            
             bot.send_message(chat_id, text, parse_mode=p_mode)
             time.sleep(DELAY_TIME)
         except:
-            time.sleep(0) # Không khựng khi lỗi
+            time.sleep(0.01)
             continue
 
 def start_master():
@@ -110,78 +115,86 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
-        # --- LỆNH TẤN CÔNG ---
+        # --- LỆNH TẤN CÔNG (SPEED 0.1s) ---
         if cmd == '/spam':
-            content = " ".join(args[1:]) if len(args) > 1 else "QUÂN ĐOÀN KHAI HỎA!!!"
+            content = " ".join(args[1:]) if len(args) > 1 else "cha hquy spam"
             stop_event.clear()
-            for b in VALID_BOTS:
-                threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spam', content), daemon=True).start()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spam', content), daemon=True).start()
 
         elif cmd == '/spnd':
             stop_event.clear()
-            for b in VALID_BOTS:
-                threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spnd'), daemon=True).start()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spnd'), daemon=True).start()
 
         elif cmd == '/sptag':
             if len(args) < 2: return
             stop_event.clear()
-            for b in VALID_BOTS:
-                threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sptag', "", args[1]), daemon=True).start()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sptag', "", args[1]), daemon=True).start()
+
+        elif cmd == '/splag':
+            stop_event.clear()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'splag'), daemon=True).start()
+
+        elif cmd == '/spdai':
+            stop_event.clear()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spdai'), daemon=True).start()
 
         elif cmd == '/dung':
             stop_event.set()
-            master.reply_to(m, "🛑 ĐÃ DỪNG OANH TẠC.")
+            master.reply_to(m, "🔴stop")
 
-        # --- LỆNH QUẢN TRỊ MỚI ---
+        # --- LỆNH QUẢN TRỊ & HỆ THỐNG ---
         elif cmd == '/info':
-            # Lấy ID của người bị reply hoặc bản thân
             target = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
             master.reply_to(m, f"🆔 ID: `{target}`", parse_mode="Markdown")
 
         elif cmd == '/listadm':
             adms = "\n".join([f"👤 `{a}`" for a in ADMIN_LIST])
-            master.reply_to(m, f"👥 **DANH SÁCH ADMIN:**\n{adms}", parse_mode="Markdown")
+            master.reply_to(m, f"👥 **ADMIN:**\n{adms}", parse_mode="Markdown")
 
         elif cmd == '/listbot':
-            # Hiển thị username và tình trạng
             bot_names = "\n".join([f"🤖 @{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🔥 **BOT ONLINE ({len(VALID_BOTS)}):**\n{bot_names}")
+            master.reply_to(m, f"🔥 **BOT ({len(VALID_BOTS)}):**\n{bot_names}")
 
         elif cmd == '/setdelay':
             try:
-                v = float(args[1])
-                if 0.0001 <= v <= 3.0:
-                    DELAY_TIME = v
-                    master.reply_to(m, f"⚡ Tốc độ mới: `{v}s`")
-                else:
-                    master.reply_to(m, "❌ Nhập trong khoảng 0.0001 đến 3.0")
+                DELAY_TIME = float(args[1])
+                master.reply_to(m, f"⚡ Delay: `{DELAY_TIME}s`")
             except: pass
 
         elif cmd == '/addadm':
             try:
                 nid = int(args[1])
-                if nid not in ADMIN_LIST: 
-                    ADMIN_LIST.append(nid)
-                    master.reply_to(m, f"✅ Đã cấp quyền cho: `{nid}`")
+                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid); master.reply_to(m, f"✅ Added: `{nid}`")
             except: pass
 
         elif cmd == '/xoaadm':
             try:
                 rid = int(args[1])
-                if rid == 7153197678: master.reply_to(m, "❌ Admin gốc không thể bị xóa!")
-                elif rid in ADMIN_LIST:
-                    ADMIN_LIST.remove(rid)
-                    master.reply_to(m, f"✅ Đã thu hồi quyền: `{rid}`")
+                if rid != 7153197678 and rid in ADMIN_LIST: ADMIN_LIST.remove(rid); master.reply_to(m, f"✅ Removed: `{rid}`")
             except: pass
 
         elif cmd == '/help':
-            msg = "🆘 `/spnd`, `/spam`, `/sptag`, `/dung`, `/info`, `/listadm`, `/listbot`, `/addadm`, `/xoaadm`, `/setdelay`"
-            master.reply_to(m, msg)
+            help_text = (
+                "🆘 **ĐỦ 12 LỆNH CỦA ÔNG:**\n"
+                "1. `/spam`: Spam nội dung\n"
+                "2. `/spnd`: Spam chửi X3\n"
+                "3. `/sptag`: Tag đối thủ\n"
+                "4. `/splag`: Spam lag máy\n"
+                "5. `/spdai`: Spam dòng dài\n"
+                "6. `/dung`: Dừng toàn bộ\n"
+                "7. `/info`: Lấy ID\n"
+                "8. `/listbot`: Kiểm tra dàn bot\n"
+                "9. `/listadm`: Danh sách admin\n"
+                "10. `/addadm`: Thêm admin\n"
+                "11. `/xoaadm`: Xóa admin\n"
+                "12. `/setdelay`: Chỉnh tốc độ"
+            )
+            master.reply_to(m, help_text, parse_mode="Markdown")
 
-    master.infinity_polling(timeout=10, skip_pending=True)
+    master.infinity_polling(timeout=10, long_polling_timeout=2)
 
 @app.route('/')
-def home(): return "SYSTEM ONLINE"
+def home(): return "POWERFUL"
 
 if __name__ == "__main__":
     filter_system()
@@ -189,4 +202,4 @@ if __name__ == "__main__":
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=port), daemon=True).start()
     while True:
         try: start_master()
-        except: time.sleep(0)
+        except: time.sleep(0.1)
