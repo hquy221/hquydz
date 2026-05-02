@@ -175,7 +175,7 @@ def start_master():
 
         elif cmd == '/help':
             help_text = (
-                "🆘 **ĐỦ 12 LỆNH CỦA ÔNG:**\n"
+                "🆘 **menu:**\n"
                 "1. `/spam`: Spam nội dung\n"
                 "2. `/spnd`: Spam chửi X3\n"
                 "3. `/sptag`: Tag đối thủ\n"
