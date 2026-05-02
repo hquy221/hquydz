@@ -6,7 +6,7 @@ import requests
 import os
 import random
 
-# --- DANH SÁCH 34 TOKEN ---
+# --- DANH SÁCH 34 TOKEN (Tự lọc khi chạy) ---
 RAW_TOKENS = [
     '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
     '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
@@ -50,18 +50,18 @@ CHUI_LIST = [
     "m tit roi ak=))=))=))=))", "lofi chill di cưng=))=))=))=))", "m bi anh vả vỡ gáy=))=))=))=))",
     "m yeu qua di=))=))=))=))", "m gãy r cưng=))=))=))=))", "anh la dang ma=))=))=))=))",
     "m tuoi j san san vs anh=))=))=))=))", "m rách roi=))=))=))=))", "sủa tiep di e=))=))=))=))",
-    "anh ba đạo quá mà=))=))=))", "m khóc r ak=))=))=))=))", "lofi chill lòi tĩ=))=))=))=))",
-    "m yeu ot vl=))=))=))=))", "m duoi r ak cn cho=))=))=))=))", "anh ba dao thiet=))=))=))=))",
-    "m tuoi j doi win anh=))=))=))=))", "m rot cmnr=))=))=))=))", "m cham kinh=))=))=))=))",
-    "anh ba dao nhat=))=))=))=))", "m yeu ot z e=))=))=))=))", "m rot mang ak=))=))=))=))",
-    "lofi chill de=))=))=))=))", "m tuoi j=))=))=))=))", "anh ba dao=))=))=))=))",
-    "m gãy r=))=))=))=))", "m rot roi=))=))=))=))", "anh ba dao qua=))=))=))=))",
-    "m tuoi lon de win anh=))=))=))=))", "m cham vl e=))=))=))=))", "m rot de=))=))=))=))",
-    "anh ba dao lam e=))=))=))=))", "m tuoi lon doi win=))=))=))=))", "m yeu ot=))=))=))=))"
+    "m khóc r ak=))=))=))=))", "lofi chill lòi tĩ=))=))=))=))", "m yeu ot vl=))=))=))=))",
+    "m duoi r ak cn cho=))=))=))=))", "anh ba dao thiet=))=))=))=))", "m tuoi j doi win anh=))=))=))=))",
+    "m rot cmnr=))=))=))=))", "m cham kinh=))=))=))=))", "anh ba dao nhat=))=))=))=))",
+    "m yeu ot z e=))=))=))=))", "m rot mang ak=))=))=))=))", "lofi chill de=))=))=))=))",
+    "m tuoi j=))=))=))=))", "anh ba dao=))=))=))=))", "m gãy r=))=))=))=))",
+    "m rot roi=))=))=))=))", "anh ba dao qua=))=))=))=))", "m tuoi lon de win anh=))=))=))=))",
+    "m cham vl e=))=))=))=))", "m rot de=))=))=))=))", "anh ba dao lam e=))=))=))=))",
+    "m tuoi lon doi win=))=))=))=))", "m yeu ot=))=))=))=))"
 ]
 
 VALID_BOTS = []
-ADMIN_LIST = [7153197678] 
+ADMIN_LIST = [7153197678] # ID Admin của ông
 DELAY_TIME = 0.1
 stop_event = threading.Event()
 app = Flask(__name__)
@@ -92,17 +92,17 @@ def bot_worker(bot, chat_id, mode, content="", target_id=None):
                 p_mode = "Markdown"
             else:
                 text = f"{content} {get_noise()}"
-            
             bot.send_message(chat_id, text, parse_mode=p_mode)
             time.sleep(DELAY_TIME)
         except Exception as e:
             if "retry after" in str(e).lower():
-                time.sleep(0) # Theo ý ông: Bỏ nghỉ khi bị chặn
+                time.sleep(0) # Theo ý ông: Không nghỉ khi bị chặn
             continue
 
+# --- MASTER CONTROL ĐẦY ĐỦ LỆNH ---
 def start_master():
     if not VALID_BOTS: return
-    master = VALID_BOTS[0]
+    master = VALID_BOTS[0] # Con đầu tiên làm chỉ huy
 
     @master.message_handler(func=lambda m: True)
     def handle_cmds(m):
@@ -113,6 +113,7 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
+        # --- LỆNH CHIẾN ---
         if cmd == '/spam':
             content = " ".join(args[1:]) if len(args) > 1 else "QUÂN ĐOÀN KHAI HỎA!!!"
             stop_event.clear()
@@ -126,13 +127,67 @@ def start_master():
                 threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spnd'), daemon=True).start()
             master.reply_to(m, f"🔥 Xả kho chửi X3!")
 
+        elif cmd == '/sptag':
+            if len(args) < 2: return
+            stop_event.clear()
+            for b in VALID_BOTS:
+                threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sptag', "", args[1]), daemon=True).start()
+
         elif cmd == '/dung':
             stop_event.set()
             master.reply_to(m, "🛑 DỪNG.")
 
+        # --- LỆNH QUẢN TRỊ ---
+        elif cmd == '/help':
+            msg = ("🆘 **DANH SÁCH LỆNH:**\n"
+                   "`/spnd` - Xả kho chửi cực dài\n"
+                   "`/spam [nội dung]` - Spam text tùy chỉnh\n"
+                   "`/sptag [ID]` - Tag nát gáy đối thủ\n"
+                   "`/dung` - Dừng toàn bộ bot\n"
+                   "`/info` - Lấy ID (reply tin nhắn đối phương)\n"
+                   "`/listadm` - Danh sách Admin\n"
+                   "`/addadm [ID]` - Thêm Admin mới\n"
+                   "`/xoaadm [ID]` - Xóa Admin\n"
+                   "`/setdelay [giây]` - Chỉnh tốc độ (mặc định 0.1)\n"
+                   "`/listbot` - Check danh sách bot sống")
+            master.reply_to(m, msg, parse_mode="Markdown")
+
+        elif cmd == '/info':
+            target = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
+            master.reply_to(m, f"🆔 ID: `{target}`", parse_mode="Markdown")
+
+        elif cmd == '/listadm':
+            adms = "\n".join([f"👤 `{a}`" for a in ADMIN_LIST])
+            master.reply_to(m, f"👥 **DANH SÁCH ADMIN:**\n{adms}", parse_mode="Markdown")
+
+        elif cmd == '/addadm':
+            try:
+                nid = int(args[1])
+                if nid not in ADMIN_LIST: 
+                    ADMIN_LIST.append(nid)
+                    master.reply_to(m, f"✅ Đã thêm: `{nid}`")
+            except: pass
+
+        elif cmd == '/xoaadm':
+            try:
+                rid = int(args[1])
+                if rid == 7153197678: master.reply_to(m, "❌ Admin gốc không thể xóa!")
+                elif rid in ADMIN_LIST:
+                    ADMIN_LIST.remove(rid)
+                    master.reply_to(m, f"✅ Đã xóa: `{rid}`")
+            except: pass
+
+        elif cmd == '/setdelay':
+            try:
+                v = float(args[1])
+                if 0.0 <= v <= 5.0:
+                    DELAY_TIME = v
+                    master.reply_to(m, f"⚡ Tốc độ: `{v}s`")
+            except: pass
+
         elif cmd == '/listbot':
             list_b = "\n".join([f"✅ @{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 Online ({len(VALID_BOTS)}):\n{list_b}")
+            master.reply_to(m, f"🤖 **BOT ONLINE ({len(VALID_BOTS)}):**\n{list_b}")
 
     master.infinity_polling(timeout=15, skip_pending=True)
 
@@ -145,5 +200,4 @@ if __name__ == "__main__":
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=port), daemon=True).start()
     while True:
         try: start_master()
-        except: 
-            time.sleep(0) # Theo ý ông: Bỏ nghỉ nếu lỗi Master
+        except: time.sleep(0) # Không nghỉ nếu Master lỗi theo ý ông
