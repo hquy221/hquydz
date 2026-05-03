@@ -27,41 +27,222 @@ RAW_TOKENS = [
     '8724848112:AAHhLYnH1LO4tVUPMTjztbNZZtni7D0uDl4', '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o'
 ]
 
-# --- KHO VĂN BẢN (X3) ---
-CHUI_LIST = [
-    "cn choa ei=))=))=))=))", "m chay anh cmnr=))=))=))=))=))", "m yeu ot z tk nfu=))=))=))=))=))", 
-    "m cham vl e=))=))=))", "slow lun e=))=))=))=))", "yeu z cn dix=))=))=))=))", 
-    "tk 3de=))=))=))=))=))", "tk dix lgbt=))=))=))=))", "cn choa nfu=))=))=))=))=))", 
-    "deo co canh lun e=))=))=))=))", "m yeu v=))=))=))=))=))=))", "yeu ro=))=))=))=))=))=))",
-    "alo may cn cho nu=)) =)) =))", "sua e=))=))=))=))", "tk ga=))=))=))", "m cham a=))=))=))",
-    "cn tó ei=))=))=))", "anh lai win a=))=))=))=))", "a đấng hot war mà=))=))=))=))", 
-    "cay k cn ccho ei=))=))=))=))", "sao cam nín v e=))=))=))", "tk nfu bất lực=))=))=))=))",
-    "speed lên de tk ngu=))=))=))", "cn choa die r=))=))=))=))", "m câm à e=))=))=))=))", 
-    "m rách cmnr=))=))=))=))", "cn gia m die ro=))=))=))=))", "m mếu r=))=))=))=))", 
-    "anh dập m nát gáy=))=))=))=))", "yeu ot vcl=))=))=))=))", "m k có trình=))=))=))=))",
-    "trình m tuổi j=))=))=))=))", "anh vả m vỡ mồm=))=))=))=))", "m sập r à=))=))=))=))",
-    "đái ra máu r à con thú=))=))=))=))", "sủa mạnh lên xem nào=))=))=))=))", "cay lòi mắt r chứ j=))=))=))",
-    "anh là bậc thầy spam=))=))=))=))", "m tuổi tôm đòi đú=))=))=))=))", "nhìn m thảm hại vl=))=))=))=))",
-    "anh chấp cả lò nhà m=))=))=))=))", "m gãy cánh r e ơi=))=))=))=))", "m mới thế đã khóc r=))=))=))=))",
-    "trình còi đừng ra gió=))=))=))=))", "m tịt ngòi r à=))=))=))=))", "anh dẫm m nát bấy=))=))=))=))",
-    "m rách nát vl=))=))=))=))", "anh vả m lệch hàm=))=))=))=))", "sủa tiếp đi con thú=))=))=))=))",
-    "m bất lực r e=))=))=))=))", "anh là huyền thoại war=))=))=))=))", "m chỉ là rác rưởi=))=))=))=))",
-    "m cay anh lắm đúng k=))=))=))=))", "nhìn m như con cún=))=))=))=))", "anh dập m tới tấp=))=))=))=))",
-    "m hụt hơi r kìa=))=))=))=))", "anh là ác mộng của m=))=))=))=))", "m run cầm cập r=))=))=))=))",
-    "anh tiễn m về trời=))=))=))=))", "m rên rỉ đi e=))=))=))=))", "anh bẻ gãy gáy m=))=))=))=))",
-    "m hết thời r e=))=))=))=))", "anh là chúa tể war=))=))=))=))", "m câm nín đi con=))=))=))=))",
-    "anh quật m tơi tả=))=))=))=))", "m nhục nhã vl=))=))=))=))", "anh đứng trên đầu m=))=))=))=))",
-    "m là thằng bại trận=))=))=))=))", "anh tiễn m ra đảo=))=))=))=))", "m tắt đài r e=))=))=))=))",
-    "anh là vô địch spam=))=))=))=))", "m sợ anh r chứ j=))=))=))=))", "anh dìm m xuống bùn=))=))=))=))",
-    "m khóc tiếng mán r=))=))=))=))", "nhìn m đuối vl e=))=))=))=))", "anh xả m nát xác=))=))=))=))",
-    "trình m chỉ để anh dẫm=))=))=))=))", "sủa hăng lên nào con chó=))=))=))=))", "m gục ngã r à e=))=))=))=))",
-    "anh hành m ra bã=))=))=))=))", "m là phế thải thôi=))=))=))=))", "anh bóp nghẹt gáy m=))=))=))=))",
-    "m quỳ xuống lạy anh đi=))=))=))=))", "anh dập cho m hết sủa=))=))=))=))", "m chỉ là dế thôi=))=))=))=))"
-]
+# --- VĂN BẢN /SPND (TUÔN DÀI GẤP 3 - KHÔNG RÚT GỌN) ---
+SPND_TEXT = """𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻"""
 
+# --- VĂN BẢN /SP36 (GIỮ NGUYÊN TUÔN THẲNG) ---
+SP36_TEXT = """cn choa ei=))=))=))=))
+123=))=))=))=))
+m chay anh cmnr=))=))=))=))=))
+m yeu ot z tk nfu=))=))=))=))=))
+m cham vl e=))=))=))
+slow lun e=))=))=))=))
+yeu z cn dix=))=))=))=))
+tk 3de=))=))=))=))=))
+tk dix lgbt=))=))=))=))
+cn choa nfu=))=))=))=))=))
+deo co canh lun e=))=))=))=))
+m cham vl e=))=))=))=))
+m yeu v=))=))=))=))=))=))
+yeu ro=))=))=))=))=))=))
+bia a=))=))=))=))
+tk dix=))=))=))=))
+mau k=))=))=))=))
+mau de=))=))=))=))=))
+cham a=))=))=))=))=))=))
+tk nfu =))=))=))=))=))
+mau ti de=))=))=))=))
+yeu ot vcl=))=))=))=))
+cmm dot tu kia=))=))=))
+lien tuc de=))=))=))=))=))
+alo may cn cho nu=)) =)) =)) 
+cmm =))=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau de=))=))=))=))=))
+alo alo=))=))=))=))
+cn tó ei=))=))=))
+mau ti e=))=))=))=))
+mau de=))=))=))=))
+yeu ot v=))=))=))
+tk ccho ei=))=))=))
+m tru noi k ay=))=))=))=))
+tk 3de=))=))=))=))
+cn ga ei=))=))=))=))
+m ga vl lun e=))=))=))=))
+alo alo=))=))=))
+sao ay nhi=))=))=))=))
+anh lai win a=))=))=))=))
+uoc loser ma=))=))=))=))
+tk nfu ei=))=))=))=))
+slow k ay=))=))=))
+cn cho =))=))=))
+speed lun e=))=))=))
+toi die k e=))=))=))
+mau me m di=))=))=))=))
+tk cho nfu=))=))=))=))=))
+m ot bo ro=))=))=))=))
+m bia a=))=))=))=))=))
+con gi khac k=))=))=))=))
+tk ga ei=))=))=))
+mau k e=))=))=))=))=))
+anh win cmnr=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau me m di=))=))=))=))
+tk cho nfu=))=))=))=))=))
+a đấng hot war mà=))=))=))=))
+cmm chối à=))=))=))=))
+a hw mẹ r=))=))=))=))
+con gi dau ma noi =))=))=))=))
+a treo co me m ma=))=))=))=))
+a win ma=))=))=))=))
+m bia a=))=))=))=))
+tk nfu ri=))=))=))=))=))
+m ngu v =))=))=))=))
+ngu ro lun e=))=))=))=))=))
+bia a e=))=))=))=))
+le de alo =))=))=))=))
+s do =))=))=))=))=))
+m sao =))=))=))=))
+ m chạy a mà=))=))=))=))
+m bịa à=))=))=))=))
+ tk nu=))=))=))=))=))
+cmm =))=))=))=))
+sua e=))=))=))=))
+mau e=))=))=))
+mau de=))=))=))
+tk ga=))=))=))
+m cham a=))=))=))
+m cham ro=))=))=))=))
+m bia a=))=))=))
+tk nfu ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))
+alo alo=))=))=))=))=))
+cn choa ei=))=))=))=))
+mau ti k=))=))=))=))
+mau de=))=))=))=))=))
+alo alo=))=))=))=))
+cn tó ei=))=))=))
+mau ti e=))=))=))=))
+mau de=))=))=))=))
+yeu ot v=))=))=))
+tk ccho ei=))=))=))
+m tru noi k ay=))=))=))=))
+tk 3de=))=))=))=))
+cn ga ei=))=))=))=))
+m ga vl lun e=))=))=))=))
+alo alo=))=))=))
+sao ay nhi=))=))=))=))
+anh lai win a=))=))=))=))
+uoc loser ma=))=))=))=))
+tk nfu ei=))=))=))=))
+slow k ay=))=))=))
+cn cho =))=))=))
+speed lun e=))=))=))
+toi die k e=))=))=))
+tru ma=))=))=))
+tru ne tk nfu=))=))=))=))=))
+m tru k noi a=))=))=))=))=))
+m yeu v a=))=))=))=))
+tk ga ei=))=))=))=))
+mau k e=))=))=))=))
+mau de=))=))=))=))
+yeu z=))=))=))=))=))
+cn choa nfu=))=))=))=))=))
+sao do=))=))=))=))=))=))
+chay bo a=))=))=))=))=))
+bo manh vl=))=))=))=))
+bo dzi ba ro=))=))=))=))
+m chay a ma=))=))=))
+anh hot war ma e=))=))=))=))=))
+anh hot trụ cmnr=))=))=))=))=))
+m lam lai a k =))=))=))=))
+lam lai anh deo dau ma=))=))=))=))
+chay anh ro r=))=))=))=))
+con gi khac k=))=))=))=))=))
+m bia a=))=))=))=))
+tk nfu ei=))=))=))=))
+cam m bia ma=))=))=))=))
+bia cn gia m dot tu e=))=))=))=))=))
+lofi chill k=))=))=))=))"""
+
+# --- CẤU HÌNH HỆ THỐNG ---
 VALID_BOTS = []
 ADMIN_LIST = [7153197678] 
-DELAY_TIME = 0.1
+DELAY_TIME = 0.1 
 stop_event = threading.Event()
 app = Flask(__name__)
 
@@ -75,7 +256,7 @@ def filter_system():
         try:
             r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=1).json()
             if r.get("ok"):
-                bot = telebot.TeleBot(t, threaded=True, num_threads=15)
+                bot = telebot.TeleBot(t, threaded=True, num_threads=40)
                 bot.username = r['result']['username']
                 VALID_BOTS.append(bot)
         except: continue
@@ -84,8 +265,11 @@ def bot_worker(bot, chat_id, mode, content="", target_id=None):
     while not stop_event.is_set():
         try:
             p_mode = None
-            if mode == 'spnd':
-                text = f"{random.choice(CHUI_LIST)} {get_noise()}"
+            if mode == 'sp36':
+                text = f"[{SP36_TEXT}](tg://user?id={target_id}) {get_noise()}"
+                p_mode = "Markdown"
+            elif mode == 'spnd':
+                text = f"{SPND_TEXT} {get_noise()}"
             elif mode == 'sptag':
                 text = f"[Sủa đi con chó ngu này](tg://user?id={target_id}) {get_noise()}"
                 p_mode = "Markdown"
@@ -100,7 +284,6 @@ def bot_worker(bot, chat_id, mode, content="", target_id=None):
             time.sleep(DELAY_TIME)
         except:
             time.sleep(0.01)
-            continue
 
 def start_master():
     if not VALID_BOTS: return
@@ -108,93 +291,75 @@ def start_master():
     
     @master.message_handler(func=lambda m: True)
     def handle_cmds(m):
-        global DELAY_TIME
+        global DELAY_TIME, ADMIN_LIST
         if m.from_user.id not in ADMIN_LIST: return
         
         args = m.text.split()
         if not args: return
         cmd = args[0].lower()
 
-        # --- LỆNH TẤN CÔNG (SPEED 0.1s) ---
-        if cmd == '/spam':
-            content = " ".join(args[1:]) if len(args) > 1 else "cha hquy spam"
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spam', content), daemon=True).start()
-
+        if cmd == '/addadm':
+            try:
+                nid = int(args[1])
+                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
+                master.reply_to(m, f"✅ Admin Added: `{nid}`")
+            except: pass
+        elif cmd == '/xoaadm':
+            try:
+                rid = int(args[1])
+                if rid in ADMIN_LIST and rid != 7153197678: ADMIN_LIST.remove(rid)
+                master.reply_to(m, f"❌ Admin Removed: `{rid}`")
+            except: pass
+        elif cmd == '/listadm':
+            master.reply_to(m, f"👥 Admins: `{ADMIN_LIST}`")
+        elif cmd == '/listbot':
+            bots = "\n".join([f"@{b.username}" for b in VALID_BOTS])
+            master.reply_to(m, f"🤖 **BOTS ONLINE ({len(VALID_BOTS)}):**\n{bots}", parse_mode="Markdown")
+        elif cmd == '/check':
+            filter_system()
+            master.reply_to(m, f"🔄 Reloaded. Live: {len(VALID_BOTS)}")
+        elif cmd == '/info':
+            target = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
+            master.reply_to(m, f"🆔 ID: `{target}`", parse_mode="Markdown")
+        elif cmd == '/setdelay':
+            try:
+                val = float(args[1])
+                if 0.001 <= val <= 3.0:
+                    DELAY_TIME = val
+                    master.reply_to(m, f"⚡ Speed: `{DELAY_TIME}s`")
+            except: pass
         elif cmd == '/spnd':
             stop_event.clear()
             for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spnd'), daemon=True).start()
-
+        elif cmd == '/sp36':
+            if len(args) < 2: return
+            stop_event.clear()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sp36', "", args[1]), daemon=True).start()
         elif cmd == '/sptag':
             if len(args) < 2: return
             stop_event.clear()
             for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sptag', "", args[1]), daemon=True).start()
-
         elif cmd == '/splag':
             stop_event.clear()
             for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'splag'), daemon=True).start()
-
         elif cmd == '/spdai':
             stop_event.clear()
             for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spdai'), daemon=True).start()
-
+        elif cmd == '/spam':
+            content = " ".join(args[1:]) if len(args) > 1 else "cha hquy spam"
+            stop_event.clear()
+            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spam', content), daemon=True).start()
         elif cmd == '/dung':
             stop_event.set()
-            master.reply_to(m, "🔴stop")
-
-        # --- LỆNH QUẢN TRỊ & HỆ THỐNG ---
-        elif cmd == '/info':
-            target = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
-            master.reply_to(m, f"🆔 ID: `{target}`", parse_mode="Markdown")
-
-        elif cmd == '/listadm':
-            adms = "\n".join([f"👤 `{a}`" for a in ADMIN_LIST])
-            master.reply_to(m, f"👥 **ADMIN:**\n{adms}", parse_mode="Markdown")
-
-        elif cmd == '/listbot':
-            bot_names = "\n".join([f"🤖 @{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🔥 **BOT ({len(VALID_BOTS)}):**\n{bot_names}")
-
-        elif cmd == '/setdelay':
-            try:
-                DELAY_TIME = float(args[1])
-                master.reply_to(m, f"⚡ Delay: `{DELAY_TIME}s`")
-            except: pass
-
-        elif cmd == '/addadm':
-            try:
-                nid = int(args[1])
-                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid); master.reply_to(m, f"✅ Added: `{nid}`")
-            except: pass
-
-        elif cmd == '/xoaadm':
-            try:
-                rid = int(args[1])
-                if rid != 7153197678 and rid in ADMIN_LIST: ADMIN_LIST.remove(rid); master.reply_to(m, f"✅ Removed: `{rid}`")
-            except: pass
-
+            master.reply_to(m, "🔴 STOPPED.")
         elif cmd == '/help':
-            help_text = (
-                "🆘 **menu:**\n"
-                "1. `/spam`: Spam nội dung\n"
-                "2. `/spnd`: Spam chửi X3\n"
-                "3. `/sptag`: Tag đối thủ\n"
-                "4. `/splag`: Spam lag máy\n"
-                "5. `/spdai`: Spam dòng dài\n"
-                "6. `/dung`: Dừng toàn bộ\n"
-                "7. `/info`: Lấy ID\n"
-                "8. `/listbot`: Kiểm tra dàn bot\n"
-                "9. `/listadm`: Danh sách admin\n"
-                "10. `/addadm`: Thêm admin\n"
-                "11. `/xoaadm`: Xóa admin\n"
-                "12. `/setdelay`: Chỉnh tốc độ"
-            )
-            master.reply_to(m, help_text, parse_mode="Markdown")
+            msg = "📜 **SYSTEM COMMANDS**\n1. /spnd\n2. /sp36 [ID]\n3. /sptag [ID]\n4. /spam [Text]\n5. /splag\n6. /spdai\n7. /dung\n8. /setdelay [s]\n9. /addadm [ID]\n10. /xoaadm [ID]\n11. /listadm\n12. /listbot\n13. /info\n14. /check"
+            master.reply_to(m, msg, parse_mode="Markdown")
 
-    master.infinity_polling(timeout=10, long_polling_timeout=2)
+    master.infinity_polling(timeout=20)
 
 @app.route('/')
-def home(): return "POWERFUL"
+def home(): return "SYSTEM ONLINE"
 
 if __name__ == "__main__":
     filter_system()
