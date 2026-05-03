@@ -6,7 +6,7 @@ import requests
 import os
 import random
 
-# --- DANH SÁCH 34 TOKEN ---
+# --- DANH SÁCH TOKEN ---
 RAW_TOKENS = [
     '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
     '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
@@ -27,7 +27,7 @@ RAW_TOKENS = [
     '8724848112:AAHhLYnH1LO4tVUPMTjztbNZZtni7D0uDl4', '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o'
 ]
 
-# --- VĂN BẢN /SPND (TUÔN DÀI GẤP 3 - KHÔNG RÚT GỌN) ---
+# --- VĂN BẢN /SPND TUÔN THẲNG DÀI GẤP 10 LẦN ---
 SPND_TEXT = """𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
@@ -77,9 +77,60 @@ SPND_TEXT = """𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠�
 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
-𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻"""
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻
+"""
 
-# --- VĂN BẢN /SP36 (GIỮ NGUYÊN TUÔN THẲNG) ---
+# --- VĂN BẢN /SP36 TUÔN THẲNG ---
 SP36_TEXT = """cn choa ei=))=))=))=))
 123=))=))=))=))
 m chay anh cmnr=))=))=))=))=))
@@ -239,24 +290,24 @@ cam m bia ma=))=))=))=))
 bia cn gia m dot tu e=))=))=))=))=))
 lofi chill k=))=))=))=))"""
 
-# --- CẤU HÌNH HỆ THỐNG ---
+# --- HỆ THỐNG ĐIỀU KHIỂN ---
 VALID_BOTS = []
 ADMIN_LIST = [7153197678] 
-DELAY_TIME = 0.1 
+DELAY_TIME = 0.0000001
 stop_event = threading.Event()
 app = Flask(__name__)
 
 def get_noise():
-    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=3))
+    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=10))
 
 def filter_system():
     global VALID_BOTS
     VALID_BOTS.clear()
     for t in RAW_TOKENS:
         try:
-            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=1).json()
+            r = requests.get(f"https://api.telegram.org/bot{t}/getMe", timeout=3).json()
             if r.get("ok"):
-                bot = telebot.TeleBot(t, threaded=True, num_threads=40)
+                bot = telebot.TeleBot(t, threaded=True, num_threads=200)
                 bot.username = r['result']['username']
                 VALID_BOTS.append(bot)
         except: continue
@@ -277,13 +328,15 @@ def bot_worker(bot, chat_id, mode, content="", target_id=None):
                 text = f"LẮC ĐI CON CHÓ {get_noise()} " * 20
             elif mode == 'spdai':
                 text = f"SỦA ĐI CON THÚ {get_noise()}\n" * 15
+            elif mode == 'spchui':
+                text = f"ĐỊT MẸ MÀY CON CHÓ {get_noise()}"
             else:
                 text = f"{content} {get_noise()}"
             
             bot.send_message(chat_id, text, parse_mode=p_mode)
             time.sleep(DELAY_TIME)
         except:
-            time.sleep(0.01)
+            time.sleep(0.0001)
 
 def start_master():
     if not VALID_BOTS: return
@@ -298,68 +351,56 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
-        if cmd == '/addadm':
+        # --- ĐỦ 14 LỆNH CHỈ HUY ---
+        if cmd == '/addadm': # 1
             try:
-                nid = int(args[1])
-                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
-                master.reply_to(m, f"✅ Admin Added: `{nid}`")
+                nid = int(args[1]); ADMIN_LIST.append(nid)
+                master.reply_to(m, f"✅ Done.")
             except: pass
-        elif cmd == '/xoaadm':
+        elif cmd == '/xoaadm': # 2
             try:
-                rid = int(args[1])
-                if rid in ADMIN_LIST and rid != 7153197678: ADMIN_LIST.remove(rid)
-                master.reply_to(m, f"❌ Admin Removed: `{rid}`")
+                rid = int(args[1]); ADMIN_LIST.remove(rid)
+                master.reply_to(m, f"❌ Done.")
             except: pass
-        elif cmd == '/listadm':
+        elif cmd == '/listadm': # 3
             master.reply_to(m, f"👥 Admins: `{ADMIN_LIST}`")
-        elif cmd == '/listbot':
+        elif cmd == '/listbot': # 4
             bots = "\n".join([f"@{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 **BOTS ONLINE ({len(VALID_BOTS)}):**\n{bots}", parse_mode="Markdown")
-        elif cmd == '/check':
-            filter_system()
-            master.reply_to(m, f"🔄 Reloaded. Live: {len(VALID_BOTS)}")
-        elif cmd == '/info':
+            master.reply_to(m, f"🤖 LIVE: {len(VALID_BOTS)}\n{bots}")
+        elif cmd == '/info': # 5
             target = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
-            master.reply_to(m, f"🆔 ID: `{target}`", parse_mode="Markdown")
-        elif cmd == '/setdelay':
+            master.reply_to(m, f"🆔 ID: `{target}`")
+        elif cmd == '/check': # 6
+            filter_system()
+            master.reply_to(m, f"🔄 Reloaded: {len(VALID_BOTS)}")
+        elif cmd == '/setdelay': # 7
             try:
-                val = float(args[1])
-                if 0.001 <= val <= 3.0:
-                    DELAY_TIME = val
-                    master.reply_to(m, f"⚡ Speed: `{DELAY_TIME}s`")
+                DELAY_TIME = float(args[1])
+                master.reply_to(m, f"⚡ Delay: {DELAY_TIME}")
             except: pass
-        elif cmd == '/spnd':
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spnd'), daemon=True).start()
-        elif cmd == '/sp36':
-            if len(args) < 2: return
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sp36', "", args[1]), daemon=True).start()
-        elif cmd == '/sptag':
-            if len(args) < 2: return
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'sptag', "", args[1]), daemon=True).start()
-        elif cmd == '/splag':
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'splag'), daemon=True).start()
-        elif cmd == '/spdai':
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spdai'), daemon=True).start()
-        elif cmd == '/spam':
-            content = " ".join(args[1:]) if len(args) > 1 else "cha hquy spam"
-            stop_event.clear()
-            for b in VALID_BOTS: threading.Thread(target=bot_worker, args=(b, m.chat.id, 'spam', content), daemon=True).start()
-        elif cmd == '/dung':
+        elif cmd == '/dung': # 8
             stop_event.set()
             master.reply_to(m, "🔴 STOPPED.")
-        elif cmd == '/help':
-            msg = "📜 **SYSTEM COMMANDS**\n1. /spnd\n2. /sp36 [ID]\n3. /sptag [ID]\n4. /spam [Text]\n5. /splag\n6. /spdai\n7. /dung\n8. /setdelay [s]\n9. /addadm [ID]\n10. /xoaadm [ID]\n11. /listadm\n12. /listbot\n13. /info\n14. /check"
-            master.reply_to(m, msg, parse_mode="Markdown")
+        elif cmd == '/help': # 9
+            master.reply_to(m, "📖 Lệnh: /spnd, /sp36, /sptag, /splag, /spdai, /spchui, /spam, /dung, /info, /check, /listbot, /listadm, /addadm, /xoaadm")
+        
+        # --- CÁC LỆNH TẤN CÔNG (10-14) ---
+        elif cmd in ['/spnd', '/sp36', '/sptag', '/splag', '/spdai', '/spchui', '/spam']:
+            stop_event.clear()
+            target_id = args[1] if len(args) > 1 else (m.reply_to_message.from_user.id if m.reply_to_message else None)
+            
+            master.reply_to(m, "/spam onl✈️") 
+            
+            # KÍCH HOẠT TOÀN BỘ DÀN BOT
+            for b in VALID_BOTS:
+                mode = cmd.replace('/', '')
+                content = " ".join(args[1:]) if mode == 'spam' else ""
+                threading.Thread(target=bot_worker, args=(b, m.chat.id, mode, content, target_id), daemon=True).start()
 
-    master.infinity_polling(timeout=20)
+    master.infinity_polling(timeout=25)
 
 @app.route('/')
-def home(): return "SYSTEM ONLINE"
+def home(): return "SYSTEM READY"
 
 if __name__ == "__main__":
     filter_system()
