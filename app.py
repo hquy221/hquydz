@@ -403,9 +403,18 @@ def start_master():
 def home(): return "SYSTEM READY"
 
 if __name__ == "__main__":
+    # 1. Quét danh sách bot
     filter_system()
-    port = int(os.environ.get("PORT", 8080))
+    
+    # 2. Khởi chạy Flask để Render không báo lỗi Port
+    # Để port mặc định 10000 nếu không tìm thấy biến môi trường
+    port = int(os.environ.get("PORT", 10000))
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=port), daemon=True).start()
+    
+    # 3. Chạy Master Bot với cơ chế tự phục hồi
     while True:
-        try: start_master()
-        except: time.sleep(0.1)
+        try:
+            start_master()
+        except Exception as e:
+            # Nếu Master die, nghỉ 0.1s rồi hồi sinh ngay
+            time.sleep(0.1)
