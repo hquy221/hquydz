@@ -10,7 +10,7 @@ app = Flask(__name__)
 def home(): return "SYSTEM ALIVE - FULL TEXT SPLAG MODE"
 
 def run_web():
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
 
 # --- DANH SÁCH TOKEN ---
