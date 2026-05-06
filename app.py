@@ -2,7 +2,6 @@ import threading
 import time
 import random
 import os
-from flask import Flask
 
 # --- HỆ THỐNG TRÁNH NGỦ ĐÔNG ---
 app = Flask(__name__)
