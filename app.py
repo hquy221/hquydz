@@ -1,14 +1,13 @@
-import telebot
 import threading
 import time
 import random
 import os
 from flask import Flask
 
-# --- HỆ THỐNG CẤU HÌNH ---
+# --- HỆ THỐNG TRÁNH NGỦ ĐÔNG ---
 app = Flask(__name__)
 @app.route('/')
-def home(): return "SYSTEM ALIVE - SPAM MODE ACTIVE"
+def home(): return "SYSTEM ALIVE - FULL TEXT SPLAG MODE"
 
 def run_web():
     port = int(os.environ.get("PORT", 8080))
@@ -35,42 +34,66 @@ RAW_TOKENS = [
 
 ADMIN_LIST = [7153197678]
 VALID_BOTS = []
-DELAY_TIME = 0.5 # Chỉnh lại delay mặc định cho an toàn
+DELAY_TIME = 0.01 
 stop_event = threading.Event()
 
-SPND_CONTENT = "𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 " * 50
-SP36_CONTENT = "cn choa ei=))=))=))=) " * 70
-
 def get_noise():
-    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=10))
+    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=15))
 
-# --- CORE SPAM ---
+# --- CORE LUỒNG SPAM ---
 def bot_worker(bot, chat_id, mode, content="", target_id=None):
     while not stop_event.is_set():
         try:
-            if mode == 'sp36': text = f"[{SP36_CONTENT}](tg://user?id={target_id}) {get_noise()}"
-            elif mode == 'spnd': text = f"{SPND_CONTENT} {get_noise()}"
-            elif mode == 'sptag': text = f"[ĐỊT CON CỤ MÀY](tg://user?id={target_id}) {get_noise()}"
-            elif mode == 'splag': text = ("꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟꙰⃟꙰⃟꙰ " * 100) + get_noise()
-            elif mode == 'spdai': text = (" ccho nqu cha hquy no1 ma\n" * 50) + get_noise()
-            elif mode == 'spchui': text = ("ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 " * 20) + get_noise()
-            else: text = f"{content} {get_noise()}"
+            if mode == 'sp36':
+                text = f"[cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) cn choa ei=))=))=))=) ](tg://user?id={target_id}) {get_noise()}"
+            elif mode == 'spnd':
+                text = f"𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 🤣🤣🤪👌🏻 {get_noise()}"
+            elif mode == 'sptag':
+                text = f"[ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY ĐỊT CON CỤ MÀY](tg://user?id={target_id}) {get_noise()}"
+            elif mode == 'splag':
+                text = (
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    "꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ ꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ "
+                    + get_noise()
+                )
+            elif mode == 'spchui':
+                text = "ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 " + get_noise()
+            elif mode == 'spdai':
+                text = " ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n ccho nqu cha hquy no1 ma\n" + get_noise()
+            else:
+                text = f"{content} {get_noise()}"
             
-            bot.send_message(chat_id, text, parse_mode="Markdown" if 'sp' in mode else None)
-            time.sleep(DELAY_TIME) # Sử dụng biến delay hệ thống
-        except Exception:
-            time.sleep(1) # Nếu lỗi (Flood wait) thì nghỉ 1s rồi thử lại
+            bot.send_message(chat_id, text, parse_mode="Markdown" if mode in ['sp36', 'sptag'] else None)
+            time.sleep(DELAY_TIME)
+        except:
+            time.sleep(0.01)
 
 def filter_system():
     global VALID_BOTS
     for t in RAW_TOKENS:
         try:
-            # Tắt threaded để tránh lỗi khi mix với threading thủ công
-            bot = telebot.TeleBot(t, threaded=False) 
+            bot = telebot.TeleBot(t, threaded=False)
             bot_info = bot.get_me()
             bot.username = bot_info.username
             VALID_BOTS.append(bot)
-            print(f"Bot @{bot.username} Ready")
         except: continue
 
 def start_master():
@@ -86,39 +109,64 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
-        if cmd in ['/spnd', '/sp36', '/sptag', '/splag', '/spdai', '/spchui', '/spam']:
+        # --- MENU HELP ---
+        if cmd == '/help':
+            help_menu = (
+                "📖 **DANH SÁCH 15 LỆNH:**\n"
+                "1. /sp36\n2. /spnd\n3. /sptag\n4. /splag\n5. /spdai\n6. /spchui\n7. /spam\n8. /info\n9. /listbot\n10. /listadm\n11. /setdelay\n12. /addadm\n13. /xoaadm\n14. /dung\n15. /status"
+            )
+            master.reply_to(m, help_menu, parse_mode="Markdown")
+
+        elif cmd in ['/sp36', '/spnd', '/sptag', '/splag', '/spdai', '/spchui', '/spam']:
             stop_event.clear()
-            # Lấy ID từ reply hoặc từ đối số đầu tiên
-            target_id = m.reply_to_message.from_user.id if m.reply_to_message else (args[1] if len(args) > 1 else None)
-            
-            master.send_message(m.chat.id, f"🚀 HỆ THỐNG {len(VALID_BOTS)} SPAM ONL✈️!")
+            target_id = m.reply_to_message.from_user.id if m.reply_to_message else (args[1] if len(args) > 1 else m.from_user.id)
+            master.send_message(m.chat.id, "🚀 START!")
             for b in VALID_BOTS:
                 mode = cmd.replace('/', '')
                 content = " ".join(args[1:]) if mode == 'spam' else ""
                 threading.Thread(target=bot_worker, args=(b, m.chat.id, mode, content, target_id), daemon=True).start()
 
-        elif cmd == '/help':
-            help_text = "📖 **MENU SPAM:**\n" + "\n".join([f"{i}. {l}" for i,l in enumerate(["/sp36", "/spnd", "/sptag", "/splag", "/spdai", "/spchui", "/spam", "/info", "/listbot", "/setdelay", "/dung"], 1)])
-            master.reply_to(m, help_text, parse_mode="Markdown")
+        elif cmd == '/info':
+            tid = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
+            master.reply_to(m, f"🆔 ID: `{tid}`", parse_mode="Markdown")
+
+        elif cmd == '/listbot':
+            msg = "\n".join([f"@{b.username}" for b in VALID_BOTS])
+            master.reply_to(m, f"🤖 Bot live: {len(VALID_BOTS)}\n{msg}")
+
+        elif cmd == '/listadm':
+            master.reply_to(m, f"👤 Admin: `{ADMIN_LIST}`")
 
         elif cmd == '/setdelay':
             try: 
                 DELAY_TIME = float(args[1])
-                master.reply_to(m, f"⏱ Đã chỉnh Delay: {DELAY_TIME}s")
-            except: master.reply_to(m, "Sai cú pháp. VD: /setdelay 0.1")
+                master.reply_to(m, f"⏱ Delay: {DELAY_TIME}s")
+            except: pass
+
+        elif cmd == '/addadm':
+            try:
+                nid = int(args[1])
+                if nid not in ADMIN_LIST: ADMIN_LIST.append(nid)
+                master.reply_to(m, f"✅ Thêm Admin: {nid}")
+            except: pass
+
+        elif cmd == '/xoaadm':
+            try:
+                rid = int(args[1])
+                if rid in ADMIN_LIST: ADMIN_LIST.remove(rid)
+                master.reply_to(m, f"❌ Xoá Admin: {rid}")
+            except: pass
 
         elif cmd == '/dung':
             stop_event.set()
-            master.reply_to(m, "🔴 ĐÃ DỪNG .")
+            master.reply_to(m, "🔴 STOP.")
 
-        elif cmd == '/listbot':
-            msg = "\n".join([f"@{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 BOTS LIVE: {len(VALID_BOTS)}\n{msg}")
+        elif cmd == '/status':
+            master.reply_to(m, f"📊 Online: {len(VALID_BOTS)} bots\n⚡ Speed: {DELAY_TIME}s")
 
     master.infinity_polling()
 
 if __name__ == "__main__":
     threading.Thread(target=run_web, daemon=True).start()
     filter_system()
-    print("System Starting...")
     start_master()
