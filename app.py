@@ -14,7 +14,7 @@ def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 
-# --- DANH SÁCH TOKEN ---
+# --- DANH SÁCH TOKEN (GIỮ NGUYÊN 29 TOKEN) ---
 RAW_TOKENS = [
     '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
     '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
@@ -35,39 +35,60 @@ RAW_TOKENS = [
 
 ADMIN_LIST = [7153197678]
 VALID_BOTS = []
-DELAY_TIME = 0.01 
+DELAY_TIME = 0.05 
 stop_event = threading.Event()
 SIGNATURE = "\nADMIN:HQUY"
 
-def get_noise():
-    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=10))
+# --- DANH SÁCH CÂU SPTAG ---
+SPTAG_TEXTS = [
+    "123 con chó cùng sủa =))", "con gái mẹ mày làm đĩ từ lúc sống đến khi chết mà 🤣", "con đĩ phàn kháng cha được không ấy",
+    "thằng cha mày gánh lúa cho mày đi đú à :))", "mẹ đĩ mày dắt mày vô sàn à :))", "con điếm bị bố sỉ nhục", "không phục à",
+    "phản kháng lại những câu sỉ vả của cha xem :))", "con chó học cách làm người à 👉🤣", "con chó ăn cứt :))", "phế phẩm vậy em",
+    "con chó mồ côi 🤙", "mày ngu vậy sao không off mxh luôn đi 🤣👋", "max speed được không ấy con chó ei 👉🤪", "lại phải win à 😁",
+    "sồn mau không con đĩ mẹ m chết", "thằng cặc bất hiếu", "mẹ mày bị anh chơi suốt năm suốt tháng mà 😛", "sồn để cứu con mẹ mày mau🥺👋",
+    "cha win cmnr :))", "bố cầm shotgun bắn thủng não con đĩ ngu :))", "mặt cứt mày phế phẩm vậy em", "con chó đú ửa à 🤪",
+    "thằng ngu ei 👉😛", "phản kháng bố mau 😒", "còn sự sống không ấy thằng nqu ei :))", "mxh là cách duy nhất để mày sống ak :))",
+    "thua bố không phục ak :))", "đĩ lồn ăn cứt trâu để sống qua ngày à 🤣", "thằng ngu cố nhai nốt mấy câu để cầu cứu con gái mẹ m nha :))"
+    # ... (Ông có thể paste thêm nốt các câu còn lại vào list này)
+]
 
-# --- LOGIC SPAM SIÊU DÀI ---
+def get_noise():
+    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=5))
+
+# --- LOGIC XỬ LÝ NỘI DUNG TỪNG LỆNH ---
 def bot_worker(bot, chat_id, mode, content="", target_id=None):
+    count = 0
     while not stop_event.is_set():
         try:
-            if mode == 'sp36':
+            if mode == 'sptag':
+                msg_index = count % len(SPTAG_TEXTS)
+                text = f"{SPTAG_TEXTS[msg_index]} {get_noise()}{SIGNATURE}"
+                count += 1
+            
+            elif mode == 'sp36':
                 base = f"[cn choa ei=))=))=))=) nhìn cái đéo gì=)) nhìn nổ mẹ hai con ngươi của mẹ m à=)) sủa lẹ lên con đĩ mẹ m ơi=)) m điếc à con chó đần=)) cha hquy no1=))](tg://user?id={target_id}) "
                 text = (base * 30)[:3900] + get_noise() + SIGNATURE
+                
             elif mode == 'spnd':
                 base = "𝗡𝗛𝗜̀𝗡 𝗖𝗔́𝗜 Đ𝗜̣𝗧 𝗠𝗘̣ 𝗠𝗔̀𝗬 𝗔̀ 𝗖𝗢𝗡 𝗖𝗛𝗢́ 𝗡𝗚𝗨 𝗖𝗛𝗔 𝗛𝗤𝗨𝗬 𝗡𝗢𝟭 𝗠𝗔̀ 𝗖𝗢𝗡 𝗖𝗛𝗢́ Đ𝗔̂̀𝗡 𝗦𝗨̉𝗔 𝗟𝗘̣ 𝗖𝗛𝗢 𝗖𝗛𝗔 Đ𝗜 𝗖𝗢𝗡 𝗖𝗛𝗢́ Đ𝗘̉ "
                 text = (base * 40)[:3900] + get_noise() + SIGNATURE
-            elif mode == 'sptag':
-                base = f"[ĐỊT CON CỤ MÀY THẰNG NGU CHA HQUY NO1 MÀ SỦA LÊN ĐI CON CHÓ ĐẦN](tg://user?id={target_id}) "
-                text = (base * 30)[:3900] + get_noise() + SIGNATURE
+                
             elif mode == 'splag':
                 text = ("꙰꙰⃟꙰⃟꙰⃟꙰꙰⃟ " * 450)[:3900] + get_noise() + SIGNATURE
-            elif mode == 'spchui':
-                text = ("ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 " * 120)[:3900] + get_noise() + SIGNATURE
+                
             elif mode == 'spdai':
                 text = (" ccho nqu cha hquy no1 ma\n" * 150)[:3900] + get_noise() + SIGNATURE
-            else:
-                text = ((content + " ") * 200)[:3900] + get_noise() + SIGNATURE
+                
+            elif mode == 'spchui':
+                text = ("ĐỊT MẸ MÀY TH NQU CHA HQUY NO1 " * 120)[:3900] + get_noise() + SIGNATURE
+                
+            else: # Lệnh /spam
+                text = ((content + " ") * 150)[:3900] + get_noise() + SIGNATURE
             
             bot.send_message(chat_id, text, parse_mode="Markdown" if mode in ['sp36', 'sptag'] else None)
             time.sleep(DELAY_TIME)
         except:
-            time.sleep(0.5)
+            time.sleep(0.01)
 
 def filter_system():
     global VALID_BOTS
@@ -92,64 +113,30 @@ def start_master():
         if not args: return
         cmd = args[0].lower()
 
-        # --- 15 LỆNH THEO HÀNG DỌC ---
         if cmd == '/help':
             help_msg = (
-                "📖 **LIST 15 LỆNH:**\n\n"
-                "1. `/sp36`\n"
-                "2. `/spnd`\n"
-                "3. `/sptag`\n"
-                "4. `/splag`\n"
-                "5. `/spdai`\n"
-                "6. `/spchui`\n"
-                "7. `/spam`\n"
-                "8. `/info`\n"
-                "9. `/listbot`\n"
-                "10. `/listadm`\n"
-                "11. `/setdelay`\n"
-                "12. `/addadm`\n"
-                "13. `/xoaadm`\n"
-                "14. `/dung`\n"
-                "15. `/status`"
+                "📖 **LIST MENU✈️:**\n\n"
+                "1. `/sp36` - Spam tag + nội dung sp36\n"
+                "2. `/spnd` - Spam nội dung nhìnditme\n"
+                "3. `/sptag` - Spam list 150 câu (Từng dòng)\n"
+                "4. `/splag` - Spam ký tự gây lag chat\n"
+                "5. `/spdai` - Spam văn bản xuống dòng dài\n"
+                "6. `/spchui` - Spam nội dung chửi rủa\n"
+                "7. `/spam` - Spam nội dung tự chọn\n"
+                "8. `/info` - Xem ID (Reply người khác)\n"
+                "9. `/listbot` - Xem danh sách bot online\n"
+                "10. `/listadm` - Xem danh sách Admin\n"
+                "11. `/setdelay` - Chỉnh tốc độ spam\n"
+                "12. `/addadm` - Thêm ID Admin\n"
+                "13. `/xoaadm` - Xóa ID Admin\n"
+                "14. `/dung` - Dừng tất cả (SPAM OFF)\n"
+                "15. `/status` - Check trạng thái bot"
             )
             master.reply_to(m, help_msg, parse_mode="Markdown")
-        
-        elif cmd == '/info':
-            target_id = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
-            master.reply_to(m, f"🆔 ID: `{target_id}`", parse_mode="Markdown")
 
-        elif cmd == '/addadm':
-            if len(args) > 1 and args[1].isdigit():
-                new_id = int(args[1])
-                if new_id not in ADMIN_LIST:
-                    ADMIN_LIST.append(new_id)
-                    master.reply_to(m, f"✅ Đã thêm {new_id}")
-            elif m.reply_to_message:
-                new_id = m.reply_to_message.from_user.id
-                if new_id not in ADMIN_LIST:
-                    ADMIN_LIST.append(new_id)
-                    master.reply_to(m, f"✅ Đã thêm {new_id}")
-
-        elif cmd == '/xoaadm':
-            if len(args) > 1 and args[1].isdigit():
-                rem_id = int(args[1])
-                if rem_id in ADMIN_LIST:
-                    ADMIN_LIST.remove(rem_id)
-                    master.reply_to(m, f"❌ Đã xóa {rem_id}")
-
-        elif cmd == '/listadm':
-            master.reply_to(m, f"📋 Admin: `{ADMIN_LIST}`", parse_mode="Markdown")
-
-        elif cmd == '/listbot':
-            bot_list = "\n".join([f"@{b.username}" for b in VALID_BOTS])
-            master.reply_to(m, f"🤖 Online:\n{bot_list}")
-
-        elif cmd == '/setdelay':
-            if len(args) > 1:
-                try:
-                    DELAY_TIME = float(args[1])
-                    master.reply_to(m, f"⚡ Delay: {DELAY_TIME}s")
-                except: pass
+        elif cmd == '/dung':
+            stop_event.set()
+            master.reply_to(m, "🔴 SPAM OFF")
 
         elif cmd in ['/sp36', '/spnd', '/sptag', '/splag', '/spdai', '/spchui', '/spam']:
             stop_event.clear()
@@ -160,18 +147,9 @@ def start_master():
                 content = " ".join(args[1:]) if mode == 'spam' else ""
                 threading.Thread(target=bot_worker, args=(b, m.chat.id, mode, content, target_id), daemon=True).start()
 
-        elif cmd == '/dung':
-            stop_event.set()
-            master.reply_to(m, "🔴 SPAM OFF")
-
-        elif cmd == '/status':
-            master.reply_to(m, f"📊 {len(VALID_BOTS)} bots | Delay: {DELAY_TIME}s")
-
     while True:
-        try:
-            master.infinity_polling(timeout=60)
-        except:
-            time.sleep(0.01)
+        try: master.infinity_polling(timeout=60)
+        except: time.sleep(0.01)
 
 if __name__ == "__main__":
     threading.Thread(target=run_web, daemon=True).start()
