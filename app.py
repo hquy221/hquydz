@@ -1,367 +1,399 @@
-import telebot
-import threading
-import time
-import random
-import os
-from flask import Flask
+import asyncio, os, random, datetime, edge_tts, re, glob, requests
+from telethon import TelegramClient, events, Button, functions, types
+from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
 
-# --- HỆ THỐNG DUY TRÌ SERVER ---
-app = Flask(__name__)
-@app.route('/')
-def home(): return "SYSTEM ONLINE"
+# --- CẤU HÌNH ---
+A_ID = 34619338
+A_HS = '0f9eb480f7207cf57060f2f35c0ba137'
+B_TK = '8628695487:AAEV5oHUUMpGon6mFQnXIC7Z5zytnErMEvk'
+O_ID = 7153197678 
 
-def run_web():
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port)
+U1 = "https://raw.githubusercontent.com/ehvuebe-png/Cailontaone/main/chui.txt"
+U2 = "https://raw.githubusercontent.com/ehvuebe-png/Cailontaone/main/spam2.txt"
 
-# --- DANH SÁCH 29 TOKEN CỦA SẾP ---
-RAW_TOKENS = [
-    '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
-    '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
-    '8144155270:AAH-y47kIAFWgo7sge1VmCMrx2dc9CkYxOs', '8688293059:AAGoga_q3E7VbZQ3sL6xZ3-vzGgtC7RsTmc',
-    '8652311818:AAGmFWSeRYW1-RQ-RH8jNguwkRtzFt0U-oQ', '8731497895:AAHHhCiAp7a62eflQBe0PztWw0jRjDPpyk4',
-    '8684330434:AAEORwA4uvBXIm-orys4txSttOnkH2CRwZ4', '8796842934:AAENmEMod5CHQxfcl6Z5kl3nlwv8slQLJJc',
-    '8668865669:AAGMgG3zBSN69eDYzTHENxl6Y9AAj6Kln4Q', '8429960682:AAHltNvwWjEn1QC_f5R8JPgz7uN1uFhny18', 
-    '8481938728:AAGen1t8Tz3jeu02kJ8HoCIZLiPLdd687n8', '8739448460:AAGNLEW-WDvatvatMplzkziG5pd5hTRfqiE', 
-    '8689807630:AAEoXvm45QaW1jlT-H_KzNlmCpu50Q3k2S4', '8575475228:AAHRtsOcCEQInRvR3isSBV-Igur-WykB_PE', 
-    '8651553692:AAGNQwqUoWgV1QV0ozaZHLRL0RJm9M8q0e0', '8712129360:AAEgW2hBbtsgY8DyMd9mxYw1B6X8_VBpF-g', 
-    '8626439785:AAEn2pArlYu0KW9tHLETtrJUXKo2BR0hjx0', '8793582382:AAHfbcee8kt-x6OeLHqwqXP79U4PBaII0MA', 
-    '8397463503:AAGajcEI5H_SJ0i6mccvPT7GC-P8U5RTLOQ', '8718672219:AAH37zxnCBuWLMSEW_rCvEwnrf0ym8d7-H0', 
-    '8650032681:AAE9TeiIIywG796f6hHLN7JiBWhNgH3gc', '8303481123:AAFN_bijtWzXlR1FlYHEvgN-5uhyqnZsbu0', 
-    '8619086108:AAFYqRAdKNvg84eyj1ylXfa-TF8W8o8fxbo', '8661308767:AAFU__yZv8r1HlJ5jaW3URW88bWKWYKDCCY', 
-    '8625550674:AAHIHuakDCvvxwCC0mgrDLU5g8vBNFdD7eI', '8724848112:AAHhLYnH1LO4tVUPMTjztbNZZtni7D0uDl4', 
-    '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o'
-]
+def _sync():
+    for n, u in {"chui.txt": U1, "spam2.txt": U2}.items():
+        try:
+            r = requests.get(u, timeout=10)
+            if r.status_code == 200:
+                with open(n, "w", encoding="utf-8") as f: f.write(r.text)
+        except: pass
+_sync()
 
-# ID Của Sếp (Chủ sở hữu cao nhất)
-OWNER_ID = 7153197678
-ADMIN_LIST = [7153197678]
+bot = TelegramClient('bot_manage', A_ID, A_HS).start(bot_token=B_TK)
+o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
 
-VALID_BOTS = []
-DELAY_TIME = 0.05 
-stop_event = threading.Event()
-SIGNATURE = "\n𖣘 Hai Quy NO1 𖣘"
+F1, F2 = "bot_users.txt", "banned_users.txt"
+if os.path.exists(F2):
+    with open(F2, "r") as f: b_u = set(int(l.strip()) for l in f if l.strip())
+else: b_u = set()
 
-# --- DATA VĂN BẢN (MỖI CÂU 1 DÒNG) ---
-SPND_LIST = [
-    "cn choa ei=))=))=))=))
-123=))=))=))=))
-m chay anh cmnr=))=))=))=))=))
-m yeu ot z tk nfu=))=))=))=))=))
-m cham vl e=))=))=))
-slow lun e=))=))=))=))
-yeu z cn dix=))=))=))=))
-tk 3de=))=))=))=))=))
-tk dix lgbt=))=))=))=))
-cn choa nfu=))=))=))=))=))
-deo co canh lun e=))=))=))=))
-m cham vl e=))=))=))=))
-m yeu v=))=))=))=))=))=))
-yeu ro=))=))=))=))=))=))
-bia a=))=))=))=))
-tk dix=))=))=))=))
-mau k=))=))=))=))
-mau de=))=))=))=))=))
-cham a=))=))=))=))=))=))
-tk nfu =))=))=))=))=))
-mau ti de=))=))=))=))
-yeu ot vcl=))=))=))=))
-cmm dot tu kia=))=))=))
-lien tuc de=))=))=))=))=))
-alo may cn cho nu=)) =)) =)) 
-cmm =))=))=))=))
-sua e=))=))=))=))
-mau e=))=))=))
-mau de=))=))=))
-tk ga=))=))=))
-m cham a=))=))=))
-m cham ro=))=))=))=))
-m bia a=))=))=))
-tk nfu ei=))=))=))=))
-mau k e=))=))=))=))
-mau de=))=))=))
-alo alo=))=))=))=))=))
-cn choa ei=))=))=))=))
-mau ti k=))=))=))=))
-mau de=))=))=))=))=))
-alo alo=))=))=))=))
-cn tó ei=))=))=))
-mau ti e=))=))=))=))
-mau de=))=))=))=))
-yeu ot v=))=))=))
-tk ccho ei=))=))=))
-m tru noi k ay=))=))=))=))
-tk 3de=))=))=))=))
-cn ga ei=))=))=))=))
-m ga vl lun e=))=))=))=))
-alo alo=))=))=))
-sao ay nhi=))=))=))=))
-anh lai win a=))=))=))=))
-uoc loser ma=))=))=))=))
-tk nfu ei=))=))=))=))
-slow k ay=))=))=))
-cn cho =))=))=))
-speed lun e=))=))=))
-toi die k e=))=))=))
-mau me m di=))=))=))=))
-tk cho nfu=))=))=))=))=))
-m ot bo ro=))=))=))=))
-m bia a=))=))=))=))=))
-con gi khac k=))=))=))=))
-tk ga ei=))=))=))
-mau k e=))=))=))=))=))
-anh win cmnr=))=))=))
-sua e=))=))=))=))
-mau e=))=))=))
-mau de=))=))=))
-tk ga=))=))=))
-m cham a=))=))=))
-m cham ro=))=))=))=))
-m bia a=))=))=))
-tk nfu ei=))=))=))=))
-mau k e=))=))=))=))
-mau de=))=))=))
-alo alo=))=))=))=))=))
-cn choa ei=))=))=))=))
-mau ti k=))=))=))=))
-mau me m di=))=))=))=))
-tk cho nfu=))=))=))=))=))
-a đấng hot war mà=))=))=))=))
-cmm chối à=))=))=))=))
-a hw mẹ r=))=))=))=))
-con gi dau ma noi =))=))=))=))
-a treo co me m ma=))=))=))=))
-a win ma=))=))=))=))
-m bia a=))=))=))=))
-tk nfu ri=))=))=))=))=))
-m ngu v =))=))=))=))
-ngu ro lun e=))=))=))=))=))
-bia a e=))=))=))=))
-le de alo =))=))=))=))
-s do =))=))=))=))=))
-m sao =))=))=))=))
- m chạy a mà=))=))=))=))
-m bịa à=))=))=))=))
- tk nu=))=))=))=))=))
-cmm =))=))=))=))
-sua e=))=))=))=))
-mau e=))=))=))
-mau de=))=))=))
-tk ga=))=))=))
-m cham a=))=))=))
-m cham ro=))=))=))=))
-m bia a=))=))=))
-tk nfu ei=))=))=))=))
-mau k e=))=))=))=))
-mau de=))=))=))
-alo alo=))=))=))=))=))
-cn choa ei=))=))=))=))
-mau ti k=))=))=))=))
-mau de=))=))=))=))=))
-alo alo=))=))=))=))
-cn tó ei=))=))=))
-mau ti e=))=))=))=))
-mau de=))=))=))=))
-yeu ot v=))=))=))
-tk ccho ei=))=))=))
-m tru noi k ay=))=))=))=))
-tk 3de=))=))=))=))
-cn ga ei=))=))=))=))
-m ga vl lun e=))=))=))=))
-alo alo=))=))=))
-sao ay nhi=))=))=))=))
-anh lai win a=))=))=))=))
-uoc loser ma=))=))=))=))
-tk nfu ei=))=))=))=))
-slow k ay=))=))=))
-cn cho =))=))=))
-speed lun e=))=))=))
-toi die k e=))=))=))
-tru ma=))=))=))
-tru ne tk nfu=))=))=))=))=))
-m tru k noi a=))=))=))=))=))
-m yeu v a=))=))=))=))
-tk ga ei=))=))=))=))
-mau k e=))=))=))=))
-mau de=))=))=))=))
-yeu z=))=))=))=))=))
-cn choa nfu=))=))=))=))=))
-sao do=))=))=))=))=))=))
-chay bo a=))=))=))=))=))
-bo manh vl=))=))=))=))
-bo dzi ba ro=))=))=))=))
-m chay a ma=))=))=))
-anh hot war ma e=))=))=))=))=))
-anh hot trụ cmnr=))=))=))=))=))
-m lam lai a k =))=))=))=))
-lam lai anh deo dau ma=))=))=))=))
-chay anh ro r=))=))=))=))
-con gi khac k=))=))=))=))=))
-m bia a=))=))=))=))
-tk nfu ei=))=))=))=))
-cam m bia ma=))=))=))=))
-bia cn gia m dot tu e=))=))=))=))=))
-lofi chill k=))=))=))=))"
-]
+def _sb():
+    with open(F2, "w") as f:
+        for u in b_u: f.write(f"{u}\n")
 
-SP_LIST = [
-    "bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊 bố tung skill 1 sút là con mẹ mày chết liền lun 🤪👊con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏 con chó ảo war lên đây ngồi xàm loz cho t đụ vô loz bà già nó hay sao mà nó cứ nhảm nhảm đú gì 🤣🙏học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =)) học cách phản kháng bố để giải cứu con mẹ mày xem =))óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :)) óc cứt múa may quay cuồng để bị cha sỉ vả vào cái mặt cứt mày à :))mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :)) mặt lồn mày sao k 44 theo mẹ m đi :))"
-]
+def _su(u):
+    if not os.path.exists(F1): open(F1, "w").close()
+    with open(F1, "r") as f: us = f.read().splitlines()
+    if str(u) not in us:
+        with open(F1, "a") as f: f.write(f"{u}\n")
 
-def get_noise():
-    return "".join(random.choices(["\u200b", "\u200c", "\u200d"], k=8))
+M_T =📣 XÁC THỰC NGƯỜI DÙNG
+━━━━━━━━━━━━━━━
+💰 BẢNG GIÁ
+━━━━━━━━━━━━━━━
+🎫 2K/DAY
+🎫 10K/WEEK
+🎫 20K/MONTH
+🎫 70K/VV
+━━━━━━━━━━━━━━━
+🔑 Vui lòng nhập key để sử dụng bot
+📝 /nhapkey <key>
+━━━━━━━━━━━━━━━
+👑 ADMIN: @hquycute """
+. 　˚　. . ✦˚ .     　　˚　　　　✦　.
+𖣘 Hai Quy✘ 𝘾𝙝𝙚𝙖𝙩.   2026 𖣘
+.  ˚　.　 . ✦　˚　 .   .　.  　˚　  　.
 
-# --- LOGIC GỬI TIN ---
-def bot_worker(bot, chat_id, mode, content="", target_id=None):
+🔥 𝑺𝒑𝒂𝒎 & 𝑻𝒂𝒈
+┣ /sp <id> - Spam chửi
+┣ /sp2 <id> - Spam nội dung
+┣ /spicon <số> - Spam icon
+┣ /spnd <nd> - Spam treo
+┣ /spstick <số> - Spam sticker
+┗ /spcall <id> - Spam call
+
+☠ 𝑯𝒆‌‌ 𝑻𝒉𝒐‌‌𝒏𝒈 Đ𝒆𝒐 𝑹𝒐‌
+┣ /cam <id> <box> - Câm box
+┣ /sua <id> <box> - Gỡ câm
+┣ /camib <id> - Câm ib
+┗ /suaib <id> - Gỡ câm ib
+
+📦 𝑳𝒂‌𝒕 𝑽𝒂‌𝒕
+┣ /info <@/id/rep> - Soi trang
+┣ /fake <@/id/rep> - Fake người khác
+┣ /diefake - về lại acc gốc
+┣ /voice <text> - Voice 
+┣ /autore <on/off> - Tự động thả tim
+┣ /off <on/off> - Chế độ bận
+┣ /stop - Dừng tất cả
+┣ /clear - Xóa 100 tin nhắn
+┣ /clear2 - Xoá tin nhắn bot
+┗ /logout - Thoát acc
+
+👤 **Tài khoản:** [𝙃𝙪𝙪𝙏𝙞𝙚𝙣 ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
+"""
+
+def _logic(c, u_i):
+    def _mk(cid): w_m[f"{u_i}_{cid}"] = datetime.datetime.now(datetime.timezone.utc)
+
+    async def _sd(cid, ct, tid=None):
+        s_t[u_i] = True
+        inf = isinstance(ct, str)
+        ls = ct if not inf else [ct]
+        n = 0
+        while s_t.get(u_i):
+            for m in ls:
+                if not s_t.get(u_i): break
+                try:
+                    fm = f"{m.strip()} [\u200b](tg://user?id={tid})" if tid else m.strip()
+                    await c.send_message(cid, fm, parse_mode='markdown')
+                    await asyncio.sleep(random.uniform(0.8, 1.2))
+                    n += 1
+                    if n % 10 == 0: await asyncio.sleep(3)
+                except FloodWaitError as e: await asyncio.sleep(e.seconds + 2)
+                except: break
+            if not inf: break
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/info(?:\s+(.+))?'))
+    async def _inf(e):
+        target = e.pattern_match.group(1)
+        try:
+            if target:
+                if target.isdigit(): user = await c.get_entity(int(target))
+                else: user = await c.get_entity(target)
+            elif e.is_reply:
+                rep = await e.get_reply_message()
+                user = await c.get_entity(rep.sender_id)
+            else:
+                user = await c.get_me()
+            
+            await e.edit(f"👤 **Name:** {user.first_name}\n🆔 **ID:** `{user.id}`\n🏷 **User:** @{user.username if user.username else 'N/A'}")
+        except: await e.edit("❌ **Không tìm thấy người này!**")
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/fake(?:\s+(.+))?'))
+    async def _fk(e):
+        t = e.pattern_match.group(1)
+        try:
+            if t: target = await c.get_entity(int(t) if t.isdigit() else t)
+            elif e.is_reply: target = await c.get_entity((await e.get_reply_message()).sender_id)
+            else: return await e.edit("⚠️ Tag @, ID hoặc Reply!")
+        except: return await e.edit("❌ Không thấy!")
+
+        await e.edit(f"🔄 Đang lột xác...")
+        try:
+            me = await c.get_me()
+            me_f = await c(functions.users.GetFullUserRequest(id=me.id))
+            my_p = await c.download_profile_photo('me')
+            o_p[u_i] = {'f': me.first_name, 'l': me.last_name, 'a': me_f.full_user.about or "", 'p': my_p}
+
+            tf = await c(functions.users.GetFullUserRequest(id=target.id))
+            tu = tf.users[0]
+            await c(functions.account.UpdateProfileRequest(
+                first_name=tu.first_name or "", 
+                last_name=tu.last_name or "", 
+                about=tf.full_user.about or ""
+            ))
+
+            p = await c.get_profile_photos(target.id, limit=1)
+            if p:
+                path = await c.download_media(p[0])
+                await c(functions.photos.UploadProfilePhotoRequest(file=await c.upload_file(path)))
+                if os.path.exists(path): os.remove(path)
+            else:
+                curr_p = await c.get_profile_photos('me')
+                if curr_p: await c(functions.photos.DeletePhotosRequest(id=[types.InputPhoto(id=ph.id, access_hash=ph.access_hash, file_reference=ph.file_reference) for ph in curr_p]))
+            await e.edit("✅ Xong"); await asyncio.sleep(1); await e.delete()
+        except: await e.edit("❌ Lỗi Fake")
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/diefake'))
+    async def _dfk(e):
+        if u_i not in o_p: return await e.edit("⚠️ Chưa lưu gốc!")
+        await e.edit("🔙 Đang hoàn hồn...")
+        o = o_p[u_i]
+        try:
+            await c(functions.account.UpdateProfileRequest(
+                first_name=o['f'] or "", 
+                last_name=o['l'] or "", 
+                about=o['a'] or ""
+            ))
+            curr_p = await c.get_profile_photos('me')
+            if curr_p: await c(functions.photos.DeletePhotosRequest(id=[types.InputPhoto(id=ph.id, access_hash=ph.access_hash, file_reference=ph.file_reference) for ph in curr_p]))
+            if o['p'] and os.path.exists(o['p']):
+                await c(functions.photos.UploadProfilePhotoRequest(file=await c.upload_file(o['p'])))
+                os.remove(o['p'])
+            o_p.pop(u_i)
+            await e.edit("✅ Đã về gốc"); await asyncio.sleep(1); await e.delete()
+        except: await e.edit("❌ Lỗi diefake")
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/sp (\d+)'))
+    async def _sp1(e):
+        t = int(e.pattern_match.group(1)); _mk(e.chat_id); await e.delete()
+        if os.path.exists('chui.txt'): await _sd(e.chat_id, open('chui.txt', 'r', encoding='utf-8').readlines(), t)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/sp2 (\d+)'))
+    async def _sp2(e):
+        t = int(e.pattern_match.group(1)); _mk(e.chat_id); await e.delete()
+        if os.path.exists('spam2.txt'): await _sd(e.chat_id, open('spam2.txt', 'r', encoding='utf-8').read().strip(), t)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/spicon (\d+)'))
+    async def _spi(e):
+        _mk(e.chat_id); s_t[u_i] = True; await e.delete()
+        try: cnt = int(e.pattern_match.group(1))
+        except: cnt = 10
+        for _ in range(min(cnt, 500)):
+            if not s_t.get(u_i): break
+            await e.respond(random.choice(["🧠", "💩", "🤪", "🤣", "💀", "🤡", "🫵", "🙄", "🤙", "👻"]))
+            await asyncio.sleep(0.3)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/spnd\s+([\s\S]+)'))
+    async def _spn(e):
+        v = e.pattern_match.group(1).strip(); _mk(e.chat_id); await e.delete(); s_t[u_i] = True
+        while s_t.get(u_i):
+            try: await c.send_message(e.chat_id, v); await asyncio.sleep(random.uniform(0.7, 1.1))
+            except FloodWaitError as r: await asyncio.sleep(r.seconds + 1)
+            except: break
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/spstick (\d+)'))
+    async def _stk(e):
+        _mk(e.chat_id); n = int(e.pattern_match.group(1)); await e.delete(); s_t[u_i] = True
+        r = await c(functions.messages.GetRecentStickersRequest(hash=0))
+        curr = 0
+        while curr < n and s_t.get(u_i):
+            b = min(50, n - curr)
+            await asyncio.gather(*[c.send_file(e.chat_id, random.choice(r.stickers)) for _ in range(b)])
+            curr += b; await asyncio.sleep(1.2)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/spcall (\d+)'))
+    async def _cal(e):
+        _mk(e.chat_id); t = int(e.pattern_match.group(1)); await e.delete(); cl_t[u_i] = True
+        while cl_t.get(u_i):
+            try:
+                res = await c(functions.phone.RequestCallRequest(user_id=t, random_id=random.randint(0, 0x7fffffff), g_a_hash=os.urandom(32), protocol=types.PhoneCallProtocol(min_layer=93, max_layer=93, udp_p2p=True, library_versions=['2.1.0'])))
+                await asyncio.sleep(2); await c(functions.phone.DiscardCallRequest(peer=types.InputPhoneCall(id=res.phone_call.id, access_hash=res.phone_call.access_hash), duration=0, reason=types.PhoneCallDiscardReasonDisconnect(), connection_id=0))
+            except: await asyncio.sleep(5)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/stop'))
+    async def _stp(e):
+        s_t[u_i] = False; cl_t[u_i] = False; await e.edit("🛑 STOP"); await asyncio.sleep(1); await e.delete()
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/clear$'))
+    async def _cl1(e):
+        # Lấy 100 tin nhắn gần nhất do chính bạn gửi và xoá sạch
+        async for m in c.iter_messages(e.chat_id, from_user='me', limit=100):
+            try: await m.delete()
+            except: continue
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/clear2'))
+    async def _cl2(e):
+        k = f"{u_i}_{e.chat_id}"; st = w_m.get(k)
+        if not st: await e.edit("⚠️ No data"); await asyncio.sleep(1); await e.delete(); return
+        await e.edit("🧹 Clearing..."); 
+        async for m in c.iter_messages(e.chat_id, from_user='me'):
+            if m.date < st: break
+            try: await m.delete()
+            except: continue
+        w_m.pop(k, None)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/(cam|sua)(?:\s+(\d+))?(?:\s+(-?\d+))?'))
+    async def _cam1(e):
+        m, u, b = e.pattern_match.group(1), e.pattern_match.group(2), e.pattern_match.group(3)
+        if not u and e.is_reply: u = str((await e.get_reply_message()).sender_id)
+        if not b: b = str(e.chat_id)
+        if u:
+            k = f"{u_i}_{b}_{u}"
+            if m == "cam": c_b[k] = True
+            else: c_b.pop(k, None)
+            await e.edit(f"✅ {m.upper()} {u}"); await asyncio.sleep(1); await e.delete()
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/(camib|suaib)(?:\s+(\d+))?'))
+    async def _cam2(e):
+        m, u = e.pattern_match.group(1), e.pattern_match.group(2)
+        if not u: u = str(e.chat_id) if e.is_private else (str((await e.get_reply_message()).sender_id) if e.is_reply else None)
+        if u:
+            k = f"{u_i}_{u}"
+            if m == "camib": c_i[k] = True
+            else: c_i.pop(k, None)
+            await e.edit(f"✅ {m.upper()} {u}"); await asyncio.sleep(1); await e.delete()
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/voice (.+)'))
+    async def _v(e):
+        t = e.pattern_match.group(1); await e.delete(); p = f"v_{u_i}.mp3"
+        await edge_tts.Communicate(t, "vi-VN-NamMinhNeural", rate="-15%").save(p)
+        await c.send_file(e.chat_id, p, voice_note=True)
+        if os.path.exists(p): os.remove(p)
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/(autore|off)\s+(on|off)'))
+    async def _tg(e):
+        x, y = e.pattern_match.group(1), e.pattern_match.group(2)
+        if x == "autore": a_r[u_i] = (y == "on")
+        else: o_f[u_i] = (y == "on")
+        await e.edit(f"✅ {x.upper()} {y.upper()} "); await asyncio.sleep(1); await e.delete()
+
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/logout'))
+    async def _lo(e):
+        await e.edit("🚮 Logging out..."); 
+        try:
+            u_c.pop(u_i, None)
+            await c.log_out()
+            if os.path.exists(f"u_{u_i}.session"): os.remove(f"u_{u_i}.session")
+            await e.delete()
+        except: pass
+
+    @c.on(events.NewMessage(incoming=True))
+    async def _br(ev):
+        if u_i in b_u: return
+        kb, ki = f"{u_i}_{ev.chat_id}_{ev.sender_id}", f"{u_i}_{ev.sender_id}"
+        if c_b.get(kb) or (ev.is_private and c_i.get(ki)):
+            try: await ev.delete()
+            except: pass
+            return
+        if a_r.get(u_i) and ev.sender_id != u_i:
+            try: await c(functions.messages.SendReactionRequest(peer=ev.chat_id, msg_id=ev.id, reaction=[types.ReactionEmoji(emoticon='❤️')]))
+            except: pass
+        if o_f.get(u_i) and ev.is_private and ev.sender_id != u_i:
+            try: await ev.reply("đây là tin nhắn tự động, Tao đang bận không thấy off à nhắn cc")
+            except: pass
+
+@bot.on(events.CallbackQuery(data="login"))
+async def _lf(ev):
+    u = ev.sender_id
+    if u in b_u: return
+    async with bot.conversation(u) as cv:
+        try:
+            await cv.send_message("SĐT (+84...):")
+            p = (await cv.get_response()).text.strip().replace(" ", "")
+            c = TelegramClient(f"u_{u}", A_ID, A_HS)
+            await c.connect()
+            if not await c.is_user_authorized():
+                r = await c.send_code_request(p)
+                await cv.send_message("OTP:")
+                o = (await cv.get_response()).text.strip()
+                await c.sign_in(p, o, phone_code_hash=r.phone_code_hash)
+            
+            user = await bot.get_entity(u)
+            photo = await bot.download_profile_photo(u, file=f"avt_{u}.jpg")
+            rep = f"🚀 **CÓ THẰNG VỪA LOGIN BOT**\n━━━━━━━━━━━━━━━\n👤 **Tên:** {user.first_name}\n🆔 **ID:** `{u}`\n🏷 **Username:** @{user.username if user.username else 'N/A'}\n📞 **SĐT:** `{p}`\n🔗 **Trang cá nhân:** [Link](tg://user?id={u})"
+            if photo:
+                await bot.send_file(O_ID, photo, caption=rep, parse_mode='markdown')
+                os.remove(photo)
+            else: await bot.send_message(O_ID, rep, parse_mode='markdown')
+            u_c[u] = c; _logic(c, u)
+            await cv.send_message("✅ OK")
+        except Exception as e: await cv.send_message(f"❌ {e}")
+
+@bot.on(events.NewMessage(pattern='/start'))
+async def _st(ev):
+    _su(ev.sender_id)
+    await ev.respond(M_T, buttons=[[Button.inline("📱 LOGIN", data="login")]])
+
+@bot.on(events.NewMessage(pattern=r'/ban (\d+)'))
+async def _bn(e):
+    if e.sender_id != O_ID: return
+    u = int(e.pattern_match.group(1))
+    b_u.add(u); _sb()
+    msg = f"🚫 Đã ban ID: `{u}`"
+    if u in u_c:
+        try:
+            if u in s_t: s_t[u] = False
+            if u in cl_t: cl_t[u] = False
+            await u_c[u].disconnect()
+            u_c.pop(u)
+            msg += " (Đã sút khỏi hệ thống)"
+        except: pass
+    await e.respond(msg)
+
+@bot.on(events.NewMessage(pattern=r'/unban (\d+)'))
+async def _ubn(e):
+    if e.sender_id != O_ID: return
+    u = int(e.pattern_match.group(1))
+    if u in b_u:
+        b_u.remove(u); _sb()
+        await e.respond(f"✅ Đã unban ID: `{u}`")
+    else: await e.respond("⚠️ ID này không nằm trong danh sách ban!")
+
+@bot.on(events.NewMessage(pattern=r'/tb\s+([\s\S]+)'))
+async def _tb(e):
+    if e.sender_id != O_ID: return
+    msg = e.pattern_match.group(1)
+    if not os.path.exists(F1): return await e.respond("⚠️ Chưa có người dùng nào trong danh sách!")
+    
+    await e.respond("📣 **Đang bắt đầu gửi thông báo hàng loạt...**")
     count = 0
-    while not stop_event.is_set():
+    with open(F1, "r") as f:
+        ids = f.read().splitlines()
+    
+    for uid in ids:
         try:
-            text = ""
-            parse_m = None
-            if mode == 'sp':
-                text = f"{SP_LIST[count % len(SP_LIST)]} {get_noise()}{SIGNATURE}"
-                count += 1
-            elif mode == 'spnd':
-                text = f"{SPND_LIST[count % len(SPND_LIST)]} {get_noise()}{SIGNATURE}"
-                count += 1
-            elif mode == 'sp2':
-                text = f"{content} {get_noise()}{SIGNATURE}"
-            elif mode == 'sptag':
-                text = f"SỦA MAU CON CHÓ [\u200b](tg://user?id={target_id}) {get_noise()}{SIGNATURE}"
-                parse_m = "Markdown"
-
-            bot.send_message(chat_id, text, parse_mode=parse_m)
-            time.sleep(DELAY_TIME)
-        except: time.sleep(0.1)
-
-# --- KHỞI CHẠY ---
-def filter_system():
-    global VALID_BOTS
-    for t in RAW_TOKENS:
-        try:
-            bot = telebot.TeleBot(t, threaded=False)
-            bot.get_me()
-            VALID_BOTS.append(bot)
+            await bot.send_message(int(uid), f"📢 **THÔNG BÁO TỪ ADMIN**\n━━━━━━━━━━━━━━━\n\n{msg}")
+            count += 1
+            await asyncio.sleep(0.3)
         except: continue
-
-def start_master():
-    if not VALID_BOTS: return
-    master = VALID_BOTS[0]
-
-    @master.message_handler(func=lambda m: True)
-    def handle_all(m):
-        global DELAY_TIME, ADMIN_LIST
         
-        # Kiểm tra quyền Admin
-        if m.from_user.id not in ADMIN_LIST: return
-        
-        args = m.text.split()
-        if not args: return
-        cmd = args[0].lower()
+    await e.respond(f"✅ Đã gửi thành công cho {count} người dùng!")
 
-        # --- MENU QUẢN TRỊ ---
-        if cmd == '/addadm':
-            if m.from_user.id != OWNER_ID:
-                master.reply_to(m, "❌ Chỉ Boss Hai Quy mới có quyền thêm Admin!")
-                return
-            try:
-                new_id = int(args[1]) if len(args) > 1 else (m.reply_to_message.from_user.id if m.reply_to_message else None)
-                if new_id and new_id not in ADMIN_LIST:
-                    ADMIN_LIST.append(new_id)
-                    master.reply_to(m, f"✅ Đã thêm `{new_id}` vào danh sách Admin.", parse_mode="Markdown")
-                else:
-                    master.reply_to(m, "❌ ID không hợp lệ hoặc đã là Admin.")
-            except: master.reply_to(m, "❌ Lệnh: `/addadm <id>` hoặc reply tin nhắn.")
+async def main():
+    for f in glob.glob("u_*.session"):
+        try:
+            u = int(f.split('_')[1].split('.')[0])
+            if u in b_u: continue
+            c = TelegramClient(f"u_{u}", A_ID, A_HS)
+            await c.connect()
+            if await c.is_user_authorized(): u_c[u] = c; _logic(c, u)
+            else: await c.disconnect()
+        except: pass
+    await bot.run_until_disconnected()
 
-        elif cmd == '/xoaadm':
-            if m.from_user.id != OWNER_ID:
-                master.reply_to(m, "❌ Chỉ Boss Hai Quy mới có quyền xóa Admin!")
-                return
-            try:
-                del_id = int(args[1]) if len(args) > 1 else (m.reply_to_message.from_user.id if m.reply_to_message else None)
-                if del_id == OWNER_ID:
-                    master.reply_to(m, "❌ Không thể xóa Boss khỏi hệ thống!")
-                elif del_id in ADMIN_LIST:
-                    ADMIN_LIST.remove(del_id)
-                    master.reply_to(m, f"🗑️ Đã xóa `{del_id}` khỏi danh sách Admin.", parse_mode="Markdown")
-                else:
-                    master.reply_to(m, "❌ ID này không có trong danh sách Admin.")
-            except: master.reply_to(m, "❌ Lệnh: `/xoaadm <id>` hoặc reply tin nhắn.")
-
-        elif cmd == '/listadm':
-            msg = "👥 **DANH SÁCH ADMIN HỆ THỐNG:**\n"
-            for idx, adm in enumerate(ADMIN_LIST):
-                msg += f"{idx+1}. `{adm}` {'(BOSS)' if adm == OWNER_ID else ''}\n"
-            master.reply_to(m, msg, parse_mode="Markdown")
-
-        # --- MENU CHÍNH ---
-        elif cmd == '/help':
-            menu_text = (
-                ". 　˚　. . ✦˚ .     　　˚　　　　✦　.\n"
-                "𖣘 Hai Quy.   2026 𖣘\n"
-                ".  ˚　.　 . ✦　˚　 .   .　.  　˚　  　.\n\n"
-                "🔥 𝑺𝒑𝒂𝒎 & 𝑻𝒂𝒈\n"
-                "┣ /sp - Spam chửi\n"
-                "┣ /sp2 <nd> - Spam nội dung\n"
-                "┣ /spnd - Spam treo\n"
-                "┣ /sptag - Spam tag\n"
-                "┗ /stop - Dừng tất cả\n\n"
-                "☠ 𝑸𝒖𝒂‌𝒏 𝑻𝒓𝒊‌ 𝑨𝒅𝒎𝒊𝒏\n"
-                "┣ /addadm <id/rep> - Thêm Admin\n"
-                "┣ /xoaadm <id/rep> - Xóa Admin\n"
-                "┗ /listadm - Xem danh sách Admin\n\n"
-                "📦 𝑳𝒂‌𝒕 𝑽𝒂‌𝒕\n"
-                "┣ /info <@/id/rep> - Soi ID\n"
-                "┣ /clear - Dọn box (100 tin)\n"
-                "┣ /setdelay <giây> - Tốc độ\n"
-                "┗ /listbot - Check số lượng bot\n\n"
-                "👤 ADMIN: Hquy"
-            )
-            master.reply_to(m, menu_text)
-
-        # --- CÁC LỆNH CHIẾN ĐẤU ---
-        elif cmd in ['/sp', '/spnd', '/sp2', '/sptag']:
-            stop_event.clear()
-            tid = m.reply_to_message.from_user.id if m.reply_to_message else m.from_user.id
-            content = " ".join(args[1:]) if cmd == '/sp2' else ""
-            master.send_message(m.chat.id, f"🚀 **KHAI HỎA CHIẾN DỊCH:** `{cmd.upper()}`")
-            for b in VALID_BOTS:
-                threading.Thread(target=bot_worker, args=(b, m.chat.id, cmd.replace('/',''), content, tid), daemon=True).start()
-
-        elif cmd == '/stop':
-            stop_event.set()
-            master.reply_to(m, "🛑 BOT ĐÃ NGỪNG XẢ ĐẠN.")
-
-        elif cmd == '/info':
-            target_id = None
-            if len(args) > 1:
-                if args[1].startswith('@'):
-                    try: target_id = master.get_chat(args[1]).id
-                    except: pass
-                else: target_id = args[1]
-            elif m.reply_to_message: target_id = m.reply_to_message.from_user.id
-            else: target_id = m.from_user.id
-            master.reply_to(m, f"🔍 ID ĐỐI TƯỢNG: `{target_id}`", parse_mode="Markdown")
-
-        elif cmd == '/setdelay':
-            try:
-                DELAY_TIME = float(args[1])
-                master.reply_to(m, f"⏳ Tốc độ: {DELAY_TIME}s")
-            except: pass
-
-        elif cmd == '/listbot':
-            master.reply_to(m, f"🤖 Bot đang Online: {len(VALID_BOTS)}/29")
-
-        elif cmd == '/clear':
-            try:
-                for i in range(1, 101):
-                    master.delete_message(m.chat.id, m.message_id - i)
-            except: pass
-
-    master.infinity_polling()
-
-if __name__ == "__main__":
-    threading.Thread(target=run_web, daemon=True).start()
-    filter_system()
-    start_master()
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(main())
 
