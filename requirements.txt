@@ -1,2 +1,6 @@
-pyTelegramBotAPI
+telethon
+requests
+edge-tts
+asyncio
 flask
+gunicorn
