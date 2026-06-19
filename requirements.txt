@@ -1,8 +1,2 @@
-pyTelegramBotAPI
-pyautogui
-keyboard
-psutil
-pycryptodome
-pywin32; sys_platform == 'win32'
-requests
+python-telegram-bot==20.8
 
